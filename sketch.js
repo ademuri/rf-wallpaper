@@ -26,6 +26,10 @@ let diagonalGridMinorColor;
 
 let highlightColor;
 
+const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+const decadeOffsets = new Map(decadeValues.map((x) => [x, Math.log10(x) * decadeWidth]));
+
 function setup() {
   createCanvas(width, height);
   background(250);
@@ -64,7 +68,7 @@ function drawFrequencyLines() {
     stroke(gridMinorColor);
     let n = 2;
     for (let minor = hz * 2; minor < hz * 10; minor += hz) {
-      const x = Math.log10(n) * decadeWidth + offset
+      const x = decadeOffsets.get(n) + offset
       line(x, topMargin, x, height - bottomMargin);
 
       n++;
@@ -97,7 +101,7 @@ function drawResistanceLines() {
     stroke(gridMinorColor);
     let n = 2;
     for (let minor = r * 2; minor < r * 10; minor += r) {
-      const y = offset - Math.log10(n) * decadeWidth;
+      const y = offset - decadeOffsets.get(n);
       line(sideMargin, y, width - sideMargin, y);
 
       n++;
