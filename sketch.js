@@ -3,8 +3,8 @@ const maxR = 1000 * 1000;
 const minHz = 1;
 const maxHz = 1000 * 1000 * 1000;
 
-const numHzDecades = intLog10(maxHz - minHz);
-const numRDecades = intLog10(maxR - minR);
+const numHzDecades = intLog10(maxHz) - intLog10(minHz);
+const numRDecades = intLog10(maxR) - intLog10(minR);
 
 const fontSize = 20;
 const topMargin = fontSize * 2;
@@ -14,7 +14,8 @@ const sideMargin = 100;
 const width = 1400;
 const gridWidth = width - sideMargin * 2;
 const decadeWidth = gridWidth / numHzDecades
-const height = gridWidth + topMargin + bottomMargin;
+const gridHeight = numRDecades * decadeWidth;
+const height = gridHeight + topMargin + bottomMargin;
 
 const doHighlight = false;
 
@@ -89,19 +90,18 @@ function drawResistanceLines() {
     textAlign(RIGHT, CENTER);
     text(formatNumber(r) + "Ω", sideMargin - 5, offset)
 
-    // if (r >= maxR) {
-    //   break;
-    // }
+    if (r == maxR) {
+      break;
+    }
 
-    // stroke(gridMinorColor);
-    // let n = 2;
-    // const step = r / 10;
-    // for (let minor = step; minor < r; minor += step) {
-    //   const y = Math.log10(n) * decadeWidth + offset;
-    //   line(sideMargin, y, width - sideMargin, y);
+    stroke(gridMinorColor);
+    let n = 2;
+    for (let minor = r * 2; minor < r * 10; minor += r) {
+      const y = offset - Math.log10(n) * decadeWidth;
+      line(sideMargin, y, width - sideMargin, y);
 
-    //   n++;
-    // }
+      n++;
+    }
 
     offset -= decadeWidth;
   }

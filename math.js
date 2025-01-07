@@ -27,7 +27,7 @@ function formatNumber(number) {
   return `${remainder} ${prefix}`;
 }
 
-const outputTestsToConsole = true;
+const outputTestsToConsole = false;
 
 new UnitTester("intLog10", "handles even powers of 10",
   () => {
