@@ -1,11 +1,3 @@
-const width = 1400;
-const height = 1000;
-
-const fontSize = 20;
-const topMargin = fontSize * 2;
-const bottomMargin = topMargin * 1.5;
-let sideMargin;
-
 const minR = 0.01;
 const maxR = 1000 * 1000;
 const minHz = 1;
@@ -14,10 +6,23 @@ const maxHz = 1000 * 1000 * 1000;
 const numHzDecades = intLog10(maxHz - minHz);
 const numRDecades = intLog10(maxR - minR);
 
+const fontSize = 20;
+const topMargin = fontSize * 2;
+const bottomMargin = topMargin * 1.5;
+const sideMargin = 100;
+
+const width = 1400;
+const gridWidth = width - sideMargin * 2;
+const decadeWidth = gridWidth / numHzDecades
+const height = gridWidth + topMargin + bottomMargin;
+
 const doHighlight = false;
 
 let gridMajorColor;
 let gridMinorColor;
+let diagonalGridMajorColor;
+let diagonalGridMinorColor;
+
 let highlightColor;
 
 function setup() {
@@ -27,19 +32,18 @@ function setup() {
   textSize(fontSize);
   textStyle(NORMAL);
   textFont("Arial");
-  sideMargin = textWidth("100 mΩ") * 1.5;
 
   gridMajorColor = color(0, 0, 0);
   gridMinorColor = color(192, 192, 192);
+  diagonalGridMajorColor = color(64, 64, 64);
+  diagonalGridMinorColor = color(208, 208, 208);
   highlightColor = color(255, 0, 0);
 }
 
 function drawFrequencyLines() {
-  const hzDecadeWidth = (width - sideMargin * 2) / numHzDecades;
-
   let offset = sideMargin;
   for (let hz = minHz; hz <= maxHz; hz = hz * 10) {
-    if (doHighlight && mouseX > 0 && mouseX > offset - (hzDecadeWidth / 2) && mouseX < offset + (hzDecadeWidth / 2)) {
+    if (doHighlight && mouseX > 0 && mouseX > offset - (decadeWidth / 2) && mouseX < offset + (decadeWidth / 2)) {
       stroke(highlightColor);
       fill(highlightColor);
     } else {
@@ -59,22 +63,20 @@ function drawFrequencyLines() {
     stroke(gridMinorColor);
     let n = 2;
     for (let minor = hz * 2; minor < hz * 10; minor += hz) {
-      const x = Math.log10(n) * hzDecadeWidth + offset
+      const x = Math.log10(n) * decadeWidth + offset
       line(x, topMargin, x, height - bottomMargin);
 
       n++;
     }
 
-    offset += hzDecadeWidth;
+    offset += decadeWidth;
   }
 }
 
 function drawResistanceLines() {
-  const rDecadeHeight = (height - topMargin - bottomMargin) / numRDecades;
-
-  let offset = topMargin;
-  for (let r = maxR; r >= minR; r = r / 10) {
-    if (doHighlight && mouseY > 0 && mouseY > offset - (rDecadeHeight / 2) && mouseY < offset + (rDecadeHeight / 2)) {
+  let offset = height - bottomMargin;
+  for (let r = minR; r <= maxR; r = r * 10) {
+    if (doHighlight && mouseY > 0 && mouseY > offset - (decadeWidth / 2) && mouseY < offset + (decadeWidth / 2)) {
       stroke(highlightColor);
       fill(highlightColor);
     } else {
@@ -87,22 +89,23 @@ function drawResistanceLines() {
     textAlign(RIGHT, CENTER);
     text(formatNumber(r) + "Ω", sideMargin - 5, offset)
 
-    if (r == minR) {
-      break;
-    }
+    // if (r >= maxR) {
+    //   break;
+    // }
 
-    stroke(gridMinorColor);
-    let n = 2;
-    const step = r / 10;
-    for (let minor = step; minor < r; minor += step) {
-      const y = Math.log10(n) * rDecadeHeight + offset;
-      line(sideMargin, y, width - sideMargin, y);
+    // stroke(gridMinorColor);
+    // let n = 2;
+    // const step = r / 10;
+    // for (let minor = step; minor < r; minor += step) {
+    //   const y = Math.log10(n) * decadeWidth + offset;
+    //   line(sideMargin, y, width - sideMargin, y);
 
-      n++;
-    }
+    //   n++;
+    // }
 
-    offset += rDecadeHeight;
+    offset -= decadeWidth;
   }
+  line(sideMargin, offset, width - sideMargin, offset);
 }
 
 function draw() {
