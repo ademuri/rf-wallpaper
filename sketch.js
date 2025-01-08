@@ -17,7 +17,7 @@ const decadeWidth = gridWidth / numHzDecades
 const gridHeight = numRDecades * decadeWidth;
 const height = gridHeight + topMargin + bottomMargin;
 
-const doHighlight = false;
+const doHighlight = true;
 
 let gridMajorColor;
 let gridMinorColor;
@@ -83,7 +83,7 @@ function setup() {
   diagonalGridMajorColor = color(64, 64, 64);
   diagonalGridMinorColor = color(208, 208, 208);
   highlightColor = color(255, 0, 0);
-  noLoop();
+  // noLoop();
 }
 
 function drawFrequencyLines() {
@@ -166,17 +166,17 @@ function drawCapacitanceLines() {
   for (let majorCLog = intLog10(rightMinC) + 1; majorCLog <= intLog10(rightMaxC); majorCLog++) {
     const majorC = Math.pow(10, majorCLog);
     // Z = 1 / (2 * pi * f * C)
-    const minZ = 1 / (2 * Math.PI * maxHz * majorC);
+    const lineMinZ = 1 / (2 * Math.PI * maxHz * majorC);
     // f = 1 / (2 * pi * C * Z)
-    const minHz = 1 / (2 * Math.PI * majorC * maxR);
+    const lineMinHz = 1 / (2 * Math.PI * majorC * maxR);
 
     stroke(diagonalGridMajorColor);
-    clippedLine(width - sideMargin, offsetForR(minZ), offsetForHz(minHz), topMargin);
+    clippedLine(width - sideMargin, offsetForR(lineMinZ), offsetForHz(lineMinHz), topMargin);
 
     // Draw label
     {
       push();
-      translate((width - sideMargin) + fontSize, offsetForR(minZ) + 5);
+      translate((width - sideMargin) + fontSize, offsetForR(lineMinZ) + 5);
       rotate(45)
       textAlign(LEFT, TOP);
       fill(diagonalGridMajorColor);
@@ -190,12 +190,12 @@ function drawCapacitanceLines() {
     let n = 2;
     for (let minorC = majorC * 2; minorC < majorC * 10; minorC += majorC) {
       // Z = 1 / (2 * pi * f * C)
-      const minZ = 1 / (2 * Math.PI * maxHz * minorC);
+      const minorLineMinZ = 1 / (2 * Math.PI * maxHz * minorC);
       // f = 1 / (2 * pi * C * Z)
-      const minHz = 1 / (2 * Math.PI * minorC * maxR);
+      const minorLinMinHz = 1 / (2 * Math.PI * minorC * maxR);
 
       stroke(diagonalGridMinorColor);
-      clippedLine(width - sideMargin, offsetForR(minZ), offsetForHz(minHz), topMargin);
+      clippedLine(width - sideMargin, offsetForR(minorLineMinZ), offsetForHz(minorLinMinHz), topMargin);
     }
   }
 
@@ -234,12 +234,12 @@ function drawCapacitanceLines() {
     let n = 2;
     for (let minorC = majorC * 2; minorC < majorC * 10; minorC += majorC) {
       // Z = 1 / (2 * pi * f * C)
-      const lineMaxR = 1 / (2 * Math.PI * minHz * minorC);
+      const minorLineMaxR = 1 / (2 * Math.PI * minHz * minorC);
       // f = 1 / (2 * pi * C * Z)
-      const lineMaxHz = 1 / (2 * Math.PI * minorC * minR);
+      const minorLineMaxHz = 1 / (2 * Math.PI * minorC * minR);
 
       stroke(diagonalGridMinorColor);
-      clippedLine(offsetForHz(lineMaxHz), height - bottomMargin, sideMargin, offsetForR(lineMaxR));
+      clippedLine(offsetForHz(minorLineMaxHz), height - bottomMargin, sideMargin, offsetForR(minorLineMaxR));
     }
   }
 }
@@ -279,12 +279,12 @@ function drawInductanceLines() {
     let n = 2;
     for (let minorL = majorL * 2; minorL < majorL * 10; minorL += majorL) {
       // Z = 2 * pi * f * L
-      const lineMinZ = 2 * Math.PI * minHz * minorL;
+      const minorLineMinZ = 2 * Math.PI * minHz * minorL;
       // f = Z / (2 * pi * L)
-      const lineMaxHz = maxR / (2 * Math.PI * minorL);
+      const minorLineMaxHz = maxR / (2 * Math.PI * minorL);
 
       stroke(diagonalGridMinorColor);
-      clippedLine(sideMargin, offsetForR(lineMinZ), offsetForHz(lineMaxHz), topMargin);
+      clippedLine(sideMargin, offsetForR(minorLineMinZ), offsetForHz(minorLineMaxHz), topMargin);
     }
   }
 
@@ -319,12 +319,12 @@ function drawInductanceLines() {
     let n = 2;
     for (let minorL = majorL * 2; minorL < majorL * 10; minorL += majorL) {
       // Z = 2 * pi * f * L
-      const lineMaxZ = 2 * Math.PI * maxHz * minorL;
+      const minorLineMaxZ = 2 * Math.PI * maxHz * minorL;
       // f = Z / (2 * pi * L)
-      const lineMinHz = minR / (2 * Math.PI * minorL);
+      const minorLineMinHz = minR / (2 * Math.PI * minorL);
 
       stroke(diagonalGridMinorColor);
-      clippedLine(offsetForHz(lineMinHz), height - bottomMargin, width - sideMargin, offsetForR(lineMaxZ));
+      clippedLine(offsetForHz(minorLineMinHz), height - bottomMargin, width - sideMargin, offsetForR(minorLineMaxZ));
     }
   }
 }
