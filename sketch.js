@@ -1,9 +1,9 @@
 const minR = 0.01;
 const maxR = 1000 * 1000;
-const minHz = 1;
-const maxHz = 10 * 1000 * 1000 * 1000;
+const minF = 1;
+const maxF = 10 * 1000 * 1000 * 1000;
 
-const numHzDecades = intLog10(maxHz) - intLog10(minHz);
+const numFDecades = intLog10(maxF) - intLog10(minF);
 const numRDecades = intLog10(maxR) - intLog10(minR);
 
 const fontSize = 20;
@@ -13,7 +13,7 @@ const sideMargin = 100;
 
 const width = 1200;
 const gridWidth = width - sideMargin * 2;
-const decadeWidth = gridWidth / numHzDecades
+const decadeWidth = gridWidth / numFDecades
 const gridHeight = numRDecades * decadeWidth;
 const height = gridHeight + topMargin + bottomMargin;
 
@@ -33,8 +33,8 @@ function offsetForR(r) {
   return (Math.log10(maxR) - Math.log10(r)) * decadeWidth + topMargin;
 }
 
-function offsetForHz(hz) {
-  return (Math.log10(hz) - Math.log10(minHz)) * decadeWidth + sideMargin;
+function offsetForF(hz) {
+  return (Math.log10(hz) - Math.log10(minF)) * decadeWidth + sideMargin;
 }
 
 // Not general-purpose, only handles the specific clipping which occurs in this application.
@@ -88,7 +88,7 @@ function setup() {
 
 function drawFrequencyLines() {
   let offset = sideMargin;
-  for (let hz = minHz; hz <= maxHz; hz = hz * 10) {
+  for (let f = minF; f <= maxF; f = f * 10) {
     if (doHighlight && mouseX > 0 && mouseX > offset - (decadeWidth / 2) && mouseX < offset + (decadeWidth / 2)) {
       stroke(highlightColor);
       fill(highlightColor);
@@ -100,15 +100,15 @@ function drawFrequencyLines() {
 
     noStroke();
     textAlign(CENTER, BOTTOM);
-    text(formatNumber(hz) + "Hz", offset, topMargin - 10);
+    text(formatNumber(f) + "Hz", offset, topMargin - 10);
 
-    if (hz == maxHz) {
+    if (f == maxF) {
       break;
     }
 
     stroke(gridMinorColor);
     let n = 2;
-    for (let minor = hz * 2; minor < hz * 10; minor += hz) {
+    for (let minor = f * 2; minor < f * 10; minor += f) {
       const x = decadeOffsets.get(n) + offset
       line(x, topMargin, x, height - bottomMargin);
 
@@ -160,18 +160,18 @@ function drawCapacitanceLines() {
   // f = 1 / (2 * pi * C * Z)
 
   // First, draw lines which originate on the right hand side (max frequency)
-  const rightMinC = 1 / (2 * Math.PI * maxHz * maxR);
-  const rightMaxC = 1 / (2 * Math.PI * maxHz * minR);
+  const rightMinC = 1 / (2 * Math.PI * maxF * maxR);
+  const rightMaxC = 1 / (2 * Math.PI * maxF * minR);
 
   for (let majorCLog = intLog10(rightMinC) + 1; majorCLog <= intLog10(rightMaxC); majorCLog++) {
     const majorC = Math.pow(10, majorCLog);
     // Z = 1 / (2 * pi * f * C)
-    const lineMinZ = 1 / (2 * Math.PI * maxHz * majorC);
+    const lineMinZ = 1 / (2 * Math.PI * maxF * majorC);
     // f = 1 / (2 * pi * C * Z)
-    const lineMinHz = 1 / (2 * Math.PI * majorC * maxR);
+    const lineMinF = 1 / (2 * Math.PI * majorC * maxR);
 
     stroke(diagonalGridMajorColor);
-    clippedLine(width - sideMargin, offsetForR(lineMinZ), offsetForHz(lineMinHz), topMargin);
+    clippedLine(width - sideMargin, offsetForR(lineMinZ), offsetForF(lineMinF), topMargin);
 
     // Draw label
     {
@@ -190,33 +190,33 @@ function drawCapacitanceLines() {
     let n = 2;
     for (let minorC = majorC * 2; minorC < majorC * 10; minorC += majorC) {
       // Z = 1 / (2 * pi * f * C)
-      const minorLineMinZ = 1 / (2 * Math.PI * maxHz * minorC);
+      const minorLineMinZ = 1 / (2 * Math.PI * maxF * minorC);
       // f = 1 / (2 * pi * C * Z)
-      const minorLinMinHz = 1 / (2 * Math.PI * minorC * maxR);
+      const minorLinMinF = 1 / (2 * Math.PI * minorC * maxR);
 
       stroke(diagonalGridMinorColor);
-      clippedLine(width - sideMargin, offsetForR(minorLineMinZ), offsetForHz(minorLinMinHz), topMargin);
+      clippedLine(width - sideMargin, offsetForR(minorLineMinZ), offsetForF(minorLinMinF), topMargin);
     }
   }
 
   // Now, draw lines which originate on the bottom (min resistance)
-  const bottomMinC = 1 / (2 * Math.PI * maxHz * minR);
-  const bottomMaxC = 1 / (2 * Math.PI * minHz * minR);
+  const bottomMinC = 1 / (2 * Math.PI * maxF * minR);
+  const bottomMaxC = 1 / (2 * Math.PI * minF * minR);
 
   for (let majorCLog = intLog10(bottomMinC) + 1; majorCLog <= intLog10(bottomMaxC); majorCLog++) {
     const majorC = Math.pow(10, majorCLog);
     // Z = 1 / (2 * pi * f * C)
-    const lineMaxR = 1 / (2 * Math.PI * minHz * majorC);
+    const lineMaxR = 1 / (2 * Math.PI * minF * majorC);
     // f = 1 / (2 * pi * C * Z)
-    const lineMaxHz = 1 / (2 * Math.PI * majorC * minR);
+    const lineMaxF = 1 / (2 * Math.PI * majorC * minR);
 
     stroke(diagonalGridMajorColor);
-    clippedLine(offsetForHz(lineMaxHz), height - bottomMargin, sideMargin, offsetForR(lineMaxR));
+    clippedLine(offsetForF(lineMaxF), height - bottomMargin, sideMargin, offsetForR(lineMaxR));
 
     // Draw label
     {
       push();
-      translate(offsetForHz(lineMaxHz) + fontSize / 2 + 5, topMargin + gridHeight + 5);
+      translate(offsetForF(lineMaxF) + fontSize / 2 + 5, topMargin + gridHeight + 5);
       rotate(45)
       textAlign(LEFT, TOP);
       fill(diagonalGridMajorColor);
@@ -234,12 +234,12 @@ function drawCapacitanceLines() {
     let n = 2;
     for (let minorC = majorC * 2; minorC < majorC * 10; minorC += majorC) {
       // Z = 1 / (2 * pi * f * C)
-      const minorLineMaxR = 1 / (2 * Math.PI * minHz * minorC);
+      const minorLineMaxR = 1 / (2 * Math.PI * minF * minorC);
       // f = 1 / (2 * pi * C * Z)
-      const minorLineMaxHz = 1 / (2 * Math.PI * minorC * minR);
+      const minorLineMaxF = 1 / (2 * Math.PI * minorC * minR);
 
       stroke(diagonalGridMinorColor);
-      clippedLine(offsetForHz(minorLineMaxHz), height - bottomMargin, sideMargin, offsetForR(minorLineMaxR));
+      clippedLine(offsetForF(minorLineMaxF), height - bottomMargin, sideMargin, offsetForR(minorLineMaxR));
     }
   }
 }
@@ -250,18 +250,18 @@ function drawInductanceLines() {
   // f = Z / (2 * pi * L)
 
   // First, draw lines which originate on the left hand side (min frequency)
-  const leftMaxL = maxR / (2 * Math.PI * minHz);
-  const leftMinL = minR / (2 * Math.PI * minHz);
+  const leftMaxL = maxR / (2 * Math.PI * minF);
+  const leftMinL = minR / (2 * Math.PI * minF);
 
   for (let majorLLog = intLog10(leftMinL) + 1; majorLLog <= intLog10(leftMaxL); majorLLog++) {
     const majorL = Math.pow(10, majorLLog);
     // Z = 2 * pi * f * L
-    const lineMinZ = 2 * Math.PI * minHz * majorL;
+    const lineMinZ = 2 * Math.PI * minF * majorL;
     // f = Z / (2 * pi * L)
-    const lineMaxHz = maxR / (2 * Math.PI * majorL);
+    const lineMaxF = maxR / (2 * Math.PI * majorL);
 
     stroke(diagonalGridMajorColor);
-    clippedLine(sideMargin, offsetForR(lineMinZ), offsetForHz(lineMaxHz), topMargin);
+    clippedLine(sideMargin, offsetForR(lineMinZ), offsetForF(lineMaxF), topMargin);
 
     {
       push();
@@ -279,33 +279,33 @@ function drawInductanceLines() {
     let n = 2;
     for (let minorL = majorL * 2; minorL < majorL * 10; minorL += majorL) {
       // Z = 2 * pi * f * L
-      const minorLineMinZ = 2 * Math.PI * minHz * minorL;
+      const minorLineMinZ = 2 * Math.PI * minF * minorL;
       // f = Z / (2 * pi * L)
-      const minorLineMaxHz = maxR / (2 * Math.PI * minorL);
+      const minorLineMaxF = maxR / (2 * Math.PI * minorL);
 
       stroke(diagonalGridMinorColor);
-      clippedLine(sideMargin, offsetForR(minorLineMinZ), offsetForHz(minorLineMaxHz), topMargin);
+      clippedLine(sideMargin, offsetForR(minorLineMinZ), offsetForF(minorLineMaxF), topMargin);
     }
   }
 
   // Now, draw lines which originate on the bottom (min resistance)
-  const bottomMaxL = minR / (2 * Math.PI * minHz);
+  const bottomMaxL = minR / (2 * Math.PI * minF);
   // L = Z / (2 * pi * f)
-  const bottomMinL = minR / (2 * Math.PI * maxHz);
+  const bottomMinL = minR / (2 * Math.PI * maxF);
 
   for (let majorLLog = intLog10(bottomMinL) + 1; majorLLog <= intLog10(bottomMaxL); majorLLog++) {
     const majorL = Math.pow(10, majorLLog);
     // f = Z / (2 * pi * L)
-    const lineMinHz = minR / (2 * Math.PI * majorL);
+    const lineMinF = minR / (2 * Math.PI * majorL);
     // Z = 2 * pi * f * L
-    const lineMaxR = 2 * Math.PI * maxHz * majorL;
+    const lineMaxR = 2 * Math.PI * maxF * majorL;
 
     stroke(diagonalGridMajorColor);
-    clippedLine(offsetForHz(lineMinHz), height - bottomMargin, width - sideMargin, offsetForR(lineMaxR));
+    clippedLine(offsetForF(lineMinF), height - bottomMargin, width - sideMargin, offsetForR(lineMaxR));
 
     {
       push();
-      translate(offsetForHz(lineMinHz) - fontSize / 2, height - bottomMargin + 5);
+      translate(offsetForF(lineMinF) - fontSize / 2, height - bottomMargin + 5);
       rotate(-45)
       textAlign(RIGHT, TOP);
       fill(diagonalGridMajorColor);
@@ -319,12 +319,12 @@ function drawInductanceLines() {
     let n = 2;
     for (let minorL = majorL * 2; minorL < majorL * 10; minorL += majorL) {
       // Z = 2 * pi * f * L
-      const minorLineMaxZ = 2 * Math.PI * maxHz * minorL;
+      const minorLineMaxZ = 2 * Math.PI * maxF * minorL;
       // f = Z / (2 * pi * L)
-      const minorLineMinHz = minR / (2 * Math.PI * minorL);
+      const minorLineMinF = minR / (2 * Math.PI * minorL);
 
       stroke(diagonalGridMinorColor);
-      clippedLine(offsetForHz(minorLineMinHz), height - bottomMargin, width - sideMargin, offsetForR(minorLineMaxZ));
+      clippedLine(offsetForF(minorLineMinF), height - bottomMargin, width - sideMargin, offsetForR(minorLineMaxZ));
     }
   }
 }
