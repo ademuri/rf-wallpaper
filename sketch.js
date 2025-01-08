@@ -1,3 +1,15 @@
+// Highlight types
+const NONE = "none";
+const MAJOR = "major";
+const MINOR = "minor";
+
+// Highlight form names
+const FREQUENCY = "frequency";
+const RESISTANCE = "resistance";
+const CAPACITANCE = "capacitance";
+const INDUCTANCE = "inductance";
+
+
 const minR = 0.01;
 const maxR = 1000 * 1000;
 const minF = 1;
@@ -68,10 +80,23 @@ function clippedLine(x1, y1, x2, y2) {
   line(x1, y1, x2, y2);
 }
 
+function getHighlightMode(name) {
+  formName = `${name}-highlight`;
+  const form = document.querySelector(`#${formName}`);
+  const data = new FormData(form);
+  return data.get(formName);
+}
+
+function mouseNearCanvas() {
+  return mouseX > (decadeWidth / 2) && mouseX < (width - decadeWidth / 2) &&
+    mouseY > (decadeWidth / 2) && mouseY < (height - decadeWidth / 2);
+}
+
 function setup() {
   angleMode(DEGREES);
 
-  createCanvas(width, height);
+  let canvas = createCanvas(width, height);
+  canvas.parent('sketch-container');
   background(250);
 
   textSize(fontSize);
@@ -83,13 +108,14 @@ function setup() {
   diagonalGridMajorColor = color(64, 64, 64);
   diagonalGridMinorColor = color(208, 208, 208);
   highlightColor = color(255, 0, 0);
-  // noLoop();
 }
 
 function drawFrequencyLines() {
+  const highlightMode = getHighlightMode(FREQUENCY);
+
   let offset = sideMargin;
   for (let f = minF; f <= maxF; f = f * 10) {
-    if (doHighlight && mouseX > 0 && mouseX > offset - (decadeWidth / 2) && mouseX < offset + (decadeWidth / 2)) {
+    if (highlightMode === MAJOR && mouseNearCanvas() && mouseX > offset - (decadeWidth / 2) && mouseX < offset + (decadeWidth / 2)) {
       stroke(highlightColor);
       fill(highlightColor);
     } else {
@@ -120,9 +146,11 @@ function drawFrequencyLines() {
 }
 
 function drawResistanceLines() {
+  const highlightMode = getHighlightMode(RESISTANCE);
+
   let offset = height - bottomMargin;
   for (let r = minR; r <= maxR; r = r * 10) {
-    if (doHighlight && mouseY > 0 && mouseY > offset - (decadeWidth / 2) && mouseY < offset + (decadeWidth / 2)) {
+    if (highlightMode === MAJOR && mouseNearCanvas() && mouseY > offset - (decadeWidth / 2) && mouseY < offset + (decadeWidth / 2)) {
       stroke(highlightColor);
       fill(highlightColor);
     } else {
