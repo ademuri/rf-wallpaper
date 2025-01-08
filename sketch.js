@@ -8,7 +8,7 @@ const numRDecades = intLog10(maxR) - intLog10(minR);
 
 const fontSize = 20;
 const topMargin = fontSize * 2;
-const bottomMargin = topMargin * 1.5;
+const bottomMargin = topMargin * 2;
 const sideMargin = 100;
 
 const width = 1200;
@@ -57,6 +57,8 @@ function clippedLine(x1, y1, x2, y2) {
 }
 
 function setup() {
+  angleMode(DEGREES);
+
   createCanvas(width, height);
   background(250);
 
@@ -158,13 +160,22 @@ function drawCapacitanceLines() {
 
     stroke(diagonalGridMajorColor);
     clippedLine(width - sideMargin, offsetForR(minZ), offsetForHz(minHz), topMargin);
+
+    {
+      push();
+      translate((width - sideMargin) + fontSize, offsetForR(minZ) + 5);
+      rotate(45)
+      textAlign(LEFT, TOP);
+      text(formatNumber(majorC) + "F", 0, 0);
+      pop();
+    }
   }
 
   // Now, draw lines which originate on the bottom (min resistance)
   const bottomMinC = 1 / (2 * Math.PI * maxHz * minR);
   const bottomMaxC = 1 / (2 * Math.PI * minHz * minR);
 
-  for (let majorCLog = intLog10(bottomMinC) + 1; majorCLog < intLog10(bottomMaxC); majorCLog++) {
+  for (let majorCLog = intLog10(bottomMinC) + 1; majorCLog <= intLog10(bottomMaxC); majorCLog++) {
     const majorC = Math.pow(10, majorCLog);
     // Z = 1 / (2 * pi * f * C)
     const lineMaxR = 1 / (2 * Math.PI * minHz * majorC);
@@ -173,6 +184,15 @@ function drawCapacitanceLines() {
 
     stroke(diagonalGridMajorColor);
     clippedLine(offsetForHz(lineMaxHz), height - bottomMargin, sideMargin, offsetForR(lineMaxR));
+
+    {
+      push();
+      translate(offsetForHz(lineMaxHz) + fontSize / 2 + 5, topMargin + gridHeight + 5);
+      rotate(45)
+      textAlign(LEFT, TOP);
+      text(formatNumber(majorC) + "F", 0, 0);
+      pop();
+    }
   }
 }
 

@@ -9,6 +9,10 @@ function formatNumber(number) {
     magnitude--;
   }
   const prefixes = new Map([
+    [-6, "a"],
+    [-5, "f"],
+    [-4, "p"],
+    [-3, "n"],
     [-2, "μ"],
     [-1, "m"],
     [0, ""],
@@ -17,12 +21,22 @@ function formatNumber(number) {
     [3, "G"],
   ]);
 
-  const prefix = prefixes.get(magnitude);
+  let prefix = prefixes.get(magnitude);
+
+  let remainder = Math.trunc(number / Math.pow(1000, magnitude));
+  // Work around rounding errors with small values
+  if (remainder % 10 == 9) {
+    remainder++;
+  }
+  if (remainder == 1000) {
+    remainder = 1;
+    magnitude++;
+    prefix = prefixes.get(magnitude);
+  }
+
   if (prefix === undefined) {
     return number;
   }
-
-  const remainder = Math.trunc(number / Math.pow(1000, magnitude));
 
   return `${remainder} ${prefix}`;
 }
@@ -64,5 +78,15 @@ new UnitTester("formatNumber", "uses the right prefixes",
     UnitTester.assert_strict_equal(formatNumber(1000), "1 k");
     UnitTester.assert_strict_equal(formatNumber(1000 * 1000), "1 M");
     UnitTester.assert_strict_equal(formatNumber(1000 * 1000 * 1000), "1 G");
+  }
+).test(outputTestsToConsole);
+
+new UnitTester("formatNumber", "uses the right prefixes for tiny numbers",
+  () => {
+    UnitTester.assert_strict_equal(formatNumber(1 / (1000 * 1000)), "1 μ");
+    UnitTester.assert_strict_equal(formatNumber(1 / (1000 * 1000 * 1000)), "1 n");
+    UnitTester.assert_strict_equal(formatNumber(1 / (1000 * 1000 * 1000 * 1000)), "1 p");
+    UnitTester.assert_strict_equal(formatNumber(1 / (1000 * 1000 * 1000 * 1000 * 1000)), "1 f");
+    UnitTester.assert_strict_equal(formatNumber(1 / (1000 * 1000 * 1000 * 1000 * 1000 * 1000)), "1 a");
   }
 ).test(outputTestsToConsole);
