@@ -166,8 +166,23 @@ function drawCapacitanceLines() {
       translate((width - sideMargin) + fontSize, offsetForR(minZ) + 5);
       rotate(45)
       textAlign(LEFT, TOP);
+      fill(gridMajorColor);
+      noStroke();
       text(formatNumber(majorC) + "F", 0, 0);
       pop();
+    }
+
+    // Draw minor lines
+    stroke(diagonalGridMinorColor);
+    let n = 2;
+    for (let minorC = majorC * 2; minorC < majorC * 10; minorC += majorC) {
+      // Z = 1 / (2 * pi * f * C)
+      const minZ = 1 / (2 * Math.PI * maxHz * minorC);
+      // f = 1 / (2 * pi * C * Z)
+      const minHz = 1 / (2 * Math.PI * minorC * maxR);
+
+      stroke(diagonalGridMinorColor);
+      clippedLine(width - sideMargin, offsetForR(minZ), offsetForHz(minHz), topMargin);
     }
   }
 
@@ -185,19 +200,44 @@ function drawCapacitanceLines() {
     stroke(diagonalGridMajorColor);
     clippedLine(offsetForHz(lineMaxHz), height - bottomMargin, sideMargin, offsetForR(lineMaxR));
 
+    // Draw label
     {
       push();
       translate(offsetForHz(lineMaxHz) + fontSize / 2 + 5, topMargin + gridHeight + 5);
       rotate(45)
       textAlign(LEFT, TOP);
+      fill(gridMajorColor);
+      noStroke();
       text(formatNumber(majorC) + "F", 0, 0);
       pop();
     }
+
+    if (majorCLog == intLog10(bottomMaxC)) {
+      break;
+    }
+
+    // Draw minor lines
+    stroke(diagonalGridMinorColor);
+    let n = 2;
+    for (let minorC = majorC * 2; minorC < majorC * 10; minorC += majorC) {
+      // Z = 1 / (2 * pi * f * C)
+      const lineMaxR = 1 / (2 * Math.PI * minHz * minorC);
+      // f = 1 / (2 * pi * C * Z)
+      const lineMaxHz = 1 / (2 * Math.PI * minorC * minR);
+
+      stroke(diagonalGridMinorColor);
+      clippedLine(offsetForHz(lineMaxHz), height - bottomMargin, sideMargin, offsetForR(lineMaxR));
+    }
   }
+}
+
+function drawInductanceLines() {
+
 }
 
 function draw() {
   drawFrequencyLines();
   drawResistanceLines();
   drawCapacitanceLines();
+  drawInductanceLines();
 }
