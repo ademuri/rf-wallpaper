@@ -11,7 +11,7 @@ const topMargin = fontSize * 2;
 const bottomMargin = topMargin * 1.5;
 const sideMargin = 100;
 
-const width = 1400;
+const width = 1200;
 const gridWidth = width - sideMargin * 2;
 const decadeWidth = gridWidth / numHzDecades
 const gridHeight = numRDecades * decadeWidth;
@@ -27,8 +27,34 @@ let diagonalGridMinorColor;
 let highlightColor;
 
 const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-
 const decadeOffsets = new Map(decadeValues.map((x) => [x, Math.log10(x) * decadeWidth]));
+
+function offsetForR(r) {
+  return (Math.log10(maxR) - Math.log10(r)) * decadeWidth + topMargin;
+}
+
+function offsetForHz(hz) {
+  return (Math.log10(hz) - Math.log10(minHz)) * decadeWidth + sideMargin;
+}
+
+// Assumes point 1 is always inside, and lines go lower right to upper left
+function clippedLine(x1, y1, x2, y2) {
+  if (x2 < sideMargin) {
+    if (y2 < topMargin) {
+      throw new Error(`point too out-of-bounds: (${x2}, ${y2})`);
+    }
+    const fraction = (sideMargin - x1) / (x2 - x1);
+    line(x1, y1, sideMargin, y1 + (y2 - y1) * fraction);
+  } else if (y2 < topMargin) {
+    if (x2 < topMargin) {
+      throw new Error(`point too out-of-bounds: (${x2}, ${y2})`);
+    }
+    const fraction = (topMargin - y1) / (y2 - y1);
+    line(x1, y1, x1 + fraction * (x2 - x1), topMargin);
+  } else {
+    line(x1, y1, x2, y2);
+  }
+}
 
 function setup() {
   createCanvas(width, height);
@@ -43,6 +69,7 @@ function setup() {
   diagonalGridMajorColor = color(64, 64, 64);
   diagonalGridMinorColor = color(208, 208, 208);
   highlightColor = color(255, 0, 0);
+  noLoop();
 }
 
 function drawFrequencyLines() {
@@ -112,7 +139,45 @@ function drawResistanceLines() {
   line(sideMargin, offset, width - sideMargin, offset);
 }
 
+function drawCapacitanceLines() {
+  // Z = 1 / (2 * pi * f * C)
+  // 1 / Z = 2 * pi * f * C
+  // C = 1 / (2 * pi * f * Z)
+  // f = 1 / (2 * pi * C * Z)
+
+  // First, draw lines which originate on the right hand side (max frequency)
+  const rightMinC = 1 / (2 * Math.PI * maxHz * maxR);
+  const rightMaxC = 1 / (2 * Math.PI * maxHz * minR);
+
+  for (let majorCLog = intLog10(rightMinC) + 1; majorCLog <= intLog10(rightMaxC); majorCLog++) {
+    const majorC = Math.pow(10, majorCLog);
+    // Z = 1 / (2 * pi * f * C)
+    const minZ = 1 / (2 * Math.PI * maxHz * majorC);
+    // f = 1 / (2 * pi * C * Z)
+    const minHz = 1 / (2 * Math.PI * majorC * maxR);
+
+    stroke(diagonalGridMajorColor);
+    clippedLine(width - sideMargin, offsetForR(minZ), offsetForHz(minHz), topMargin);
+  }
+
+  // Now, draw lines which originate on the bottom (min resistance)
+  const bottomMinC = 1 / (2 * Math.PI * maxHz * minR);
+  const bottomMaxC = 1 / (2 * Math.PI * minHz * minR);
+
+  for (let majorCLog = intLog10(bottomMinC) + 1; majorCLog < intLog10(bottomMaxC); majorCLog++) {
+    const majorC = Math.pow(10, majorCLog);
+    // Z = 1 / (2 * pi * f * C)
+    const lineMaxR = 1 / (2 * Math.PI * minHz * majorC);
+    // f = 1 / (2 * pi * C * Z)
+    const lineMaxHz = 1 / (2 * Math.PI * majorC * minR);
+
+    stroke(diagonalGridMajorColor);
+    clippedLine(offsetForHz(lineMaxHz), height - bottomMargin, sideMargin, offsetForR(lineMaxR));
+  }
+}
+
 function draw() {
   drawFrequencyLines();
   drawResistanceLines();
+  drawCapacitanceLines();
 }
