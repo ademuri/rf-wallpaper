@@ -1,7 +1,7 @@
 // Highlight types
-const NONE = "none";
-const MAJOR = "major";
-const MINOR = "minor";
+const NONE = 0;
+const MAJOR = 1;
+const MINOR = 2;
 
 // Highlight form names
 const FREQUENCY = "frequency";
@@ -38,7 +38,7 @@ let diagonalGridMinorColor;
 
 let highlightColor;
 
-const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const decadeOffsets = new Map(decadeValues.map((x) => [x, Math.log10(x) * decadeWidth]));
 
 function offsetForR(r) {
@@ -84,7 +84,16 @@ function getHighlightMode(name) {
   formName = `${name}-highlight`;
   const form = document.querySelector(`#${formName}`);
   const data = new FormData(form);
-  return data.get(formName);
+  switch (data.get(formName)) {
+    case "minor":
+      return 2;
+    case "major":
+      return 1;
+
+    case "none":
+    default:
+      return 0;
+  }
 }
 
 function mouseNearCanvas() {
@@ -114,33 +123,54 @@ function drawFrequencyLines() {
   const highlightMode = getHighlightMode(FREQUENCY);
 
   let offset = sideMargin;
+  let prevOffset = sideMargin - decadeWidth;
   for (let f = minF; f <= maxF; f = f * 10) {
-    if (highlightMode === MAJOR && mouseNearCanvas() && mouseX > offset - (decadeWidth / 2) && mouseX < offset + (decadeWidth / 2)) {
-      stroke(highlightColor);
+    const thisLineMajorHighlight = mouseNearCanvas() && mouseX > offset - (decadeWidth / 2) && mouseX < offset + (decadeWidth / 2);
+    if (highlightMode >= MAJOR && thisLineMajorHighlight) {
       fill(highlightColor);
     } else {
-      stroke(gridMajorColor);
       fill(gridMajorColor);
     }
-    line(offset, topMargin, offset, height - bottomMargin);
 
     noStroke();
     textAlign(CENTER, BOTTOM);
     text(formatNumber(f) + "Hz", offset, topMargin - 10);
 
-    if (f == maxF) {
-      break;
-    }
-
-    stroke(gridMinorColor);
-    let n = 2;
-    for (let minor = f * 2; minor < f * 10; minor += f) {
+    let n = 1;
+    let prevX = prevOffset + decadeOffsets.get(9);
+    for (let minor = f; minor < f * 10; minor += f) {
       const x = decadeOffsets.get(n) + offset
+      const nextX = decadeOffsets.get(n + 1) + offset;
+      const thisLineMinorHighlight = mouseNearCanvas() &&
+        mouseX > (prevX + (x - prevX) / 2) &&
+        (mouseX <= (x + (nextX - x) / 2));
+
+      if (n == 1) {
+        if (highlightMode === MAJOR && thisLineMajorHighlight) {
+          stroke(highlightColor);
+        } else if (highlightMode == MINOR && thisLineMinorHighlight) {
+          stroke(highlightColor);
+        } else {
+          stroke(gridMajorColor);
+        }
+      } else {
+        if (highlightMode === MINOR && thisLineMinorHighlight) {
+          stroke(highlightColor);
+        } else {
+          stroke(gridMinorColor);
+        }
+      }
       line(x, topMargin, x, height - bottomMargin);
 
+      if (f == maxF) {
+        break;
+      }
+
       n++;
+      prevX = x;
     }
 
+    prevOffset = offset;
     offset += decadeWidth;
   }
 }
