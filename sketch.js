@@ -311,14 +311,19 @@ function drawCapacitanceLines() {
       }
 
       let lineColor = n === 1 ? diagonalGridMajorColor : diagonalGridMinorColor;
-      if (highlightMode === MAJOR && n === 1) {
+      let highlightMajor = false;
+      if (highlightMode >= MAJOR) {
         const currentCLog = Math.log10(currentC);
         const prevCLog = Math.log10(majorC / 10);
         const nextCLog = Math.log10(majorC * 10);
         const mouseCLog = Math.log10(mouseC);
         if (mouseCLog > (currentCLog + prevCLog) / 2 && mouseCLog < (nextCLog + currentCLog) / 2) {
-          lineColor = highlightColor;
+          highlightMajor = true;
         }
+      }
+
+      if (highlightMode === MAJOR && n === 1 && highlightMajor) {
+          lineColor = highlightColor;
       } else if (highlightMode === MINOR) {
         const currentCLog = Math.log10(currentC);
         const mouseCLog = Math.log10(mouseC);
@@ -347,7 +352,11 @@ function drawCapacitanceLines() {
         push();
         translate(labelX, labelY);
         rotate(45);
-        fill(diagonalGridMajorColor);
+        if (highlightMajor) {
+          fill(highlightColor);
+        } else {
+          fill(diagonalGridMajorColor);
+        }
         noStroke();
         textAlign(LEFT, TOP);
         text(formatNumber(currentC) + "F", 0, 0);
@@ -358,6 +367,8 @@ function drawCapacitanceLines() {
 }
 
 function drawInductanceLines() {
+  const highlightMode = getHighlightMode(INDUCTANCE);
+
   // Z = 2 * pi * f * L
   // L = Z / (2 * pi * f)
   // f = Z / (2 * pi * L)
@@ -396,11 +407,28 @@ function drawInductanceLines() {
         y2 = offsetForR(lineMaxR);
       }
 
-      let lineColor;
-      if (n === 1) {
-        lineColor = diagonalGridMajorColor;
-      } else {
-        lineColor = diagonalGridMinorColor;
+      let lineColor = n === 1 ? diagonalGridMajorColor : diagonalGridMinorColor;
+      let highlightMajor = false;
+      if (highlightMode >= MAJOR) {
+        const currentLLog = Math.log10(currentL);
+        const prevLLog = Math.log10(majorL / 10);
+        const nextLLog = Math.log10(majorL * 10);
+        const mouseLLog = Math.log10(mouseL);
+        if (mouseLLog > (currentLLog + prevLLog) / 2 && mouseLLog < (nextLLog + currentLLog) / 2) {
+          highlightMajor = true;
+        }
+      }
+
+      if (highlightMode === MAJOR && n === 1 && highlightMajor) {
+        lineColor = highlightColor;
+      } else if (highlightMode === MINOR) {
+        const currentLLog = Math.log10(currentL);
+        const mouseLLog = Math.log10(mouseL);
+        const nextLLog = Math.log10(majorL * (n + 1));
+        const prevLLog = n === 1 ? Math.log10(majorL * 9 / 10) : Math.log10(majorL * (n - 1));
+        if (mouseLLog > (currentLLog + prevLLog) / 2 && mouseLLog < (nextLLog + currentLLog) / 2) {
+          lineColor = highlightColor;
+        }
       }
 
       stroke(lineColor);
@@ -420,7 +448,11 @@ function drawInductanceLines() {
         push();
         translate(labelX, labelY);
         rotate(-45);
-        fill(diagonalGridMajorColor); // Keep Label color consistent
+        if (highlightMajor) {
+          fill(highlightColor);
+        } else {
+          fill(diagonalGridMajorColor);
+        }
         noStroke();
         textAlign(RIGHT, TOP);
         text(formatNumber(currentL) + "H", 0, 0);
