@@ -96,6 +96,10 @@ function getHighlightMode(name) {
   }
 }
 
+function setValueDisplay(name, value) {
+  document.getElementById(`value-${name}`).textContent = value;
+}
+
 function mouseNearCanvas() {
   return mouseX > (decadeWidth / 2) && mouseX < (width - decadeWidth / 2) &&
     mouseY > (decadeWidth / 2) && mouseY < (height - decadeWidth / 2);
@@ -121,6 +125,15 @@ function setup() {
 
 function drawFrequencyLines() {
   const highlightMode = getHighlightMode(FREQUENCY);
+
+  let adjustedX = mouseX - sideMargin;
+  if (adjustedX < 0) {
+    adjustedX = 0;
+  } else if (adjustedX > gridWidth) {
+    adjustedX = gridWidth;
+  }
+  const mouseF = minF * Math.pow(10, adjustedX / gridWidth * (Math.log10(maxF) - Math.log10(minF)));
+  setValueDisplay("frequency", `${formatNumber(mouseF)}Hz`);
 
   let offset = sideMargin;
   let prevOffset = sideMargin - decadeWidth;
@@ -177,6 +190,15 @@ function drawFrequencyLines() {
 
 function drawResistanceLines() {
   const highlightMode = getHighlightMode(RESISTANCE);
+
+  let adjustedY = mouseY - topMargin;
+  if (adjustedY < 0) {
+    adjustedY = 0;
+  } else if (adjustedY > gridHeight) {
+    adjustedY = gridHeight;
+  }
+  const mouseR = maxR * Math.pow(10, adjustedY / gridHeight * (Math.log10(minR) - Math.log10(maxR)));
+  setValueDisplay("impedance", `${formatNumber(mouseR)}Ω`);
 
   let offset = height - bottomMargin;
   let prevOffset = sideMargin - decadeWidth;

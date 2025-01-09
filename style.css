@@ -1,8 +1,49 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
+  font-family: Arial, sans-serif;
 }
 
 canvas {
   display: block;
+}
+
+#highlight-forms {
+  display: flex;
+  flex-direction: row;
+  /* or just 'row' */
+}
+
+#highlight-forms>form {
+  /* Add some spacing between the forms */
+  margin-right: 10px;
+}
+
+#all-highlight legend {
+  font-style: italic;
+}
+
+#value-display {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  max-width: 200px;
+}
+
+.value-item {
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.value {
+  color: #222;
+  text-align: right;
+  min-width: 80px;
 }

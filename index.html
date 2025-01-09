@@ -13,22 +13,6 @@
   <script src="libraries/p5.sound.min.js"></script>
   <script src="libraries/unit-tester.js"></script>
   <script src="controls.js"></script>
-  <style>
-    #highlight-forms {
-      display: flex;
-      flex-direction: row;
-      /* or just 'row' */
-    }
-
-    #highlight-forms>form {
-      /* Add some spacing between the forms */
-      margin-right: 10px;
-    }
-
-    #all-highlight legend {
-      font-style: italic;
-    }
-  </style>
 </head>
 
 <body>
@@ -105,8 +89,25 @@
     </form>
   </div>
 
-
+  <div id="value-display">
+    <div class="value-item">
+      <span class="label">Impedance:</span>
+      <span class="value" id="value-impedance"></span>
+    </div>
+    <div class="value-item">
+      <span class="label">Frequency:</span>
+      <span class="value" id="value-frequency"></span>
+    </div>
+    <div class="value-item">
+      <span class="label">Capacitance:</span>
+      <span class="value" id="value-capacitance"></span>
+    </div>
+    <div class="value-item">
+      <span class="label">Inductance:</span>
+      <span class="value" id="value-inductance"></span>
+    </div>
   </div>
+
 </body>
 
 </html>
