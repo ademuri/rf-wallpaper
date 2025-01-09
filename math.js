@@ -2,7 +2,7 @@ function intLog10(number) {
   return Math.round(Math.log10(number));
 }
 
-function formatNumber(number) {
+function formatNumber(number, decimals=0) {
   const rawMagnitude = intLog10(number) / 3;
   let magnitude = Math.trunc(rawMagnitude);
   if (rawMagnitude < 0) {
@@ -23,7 +23,7 @@ function formatNumber(number) {
 
   let prefix = prefixes.get(magnitude);
 
-  let remainder = Math.trunc(number / Math.pow(1000, magnitude));
+  let remainder = (number / Math.pow(1000, magnitude)).toFixed(decimals);
   // Work around rounding errors with small values
   if (remainder % 10 == 9) {
     remainder++;
@@ -41,7 +41,7 @@ function formatNumber(number) {
   return `${remainder} ${prefix}`;
 }
 
-const outputTestsToConsole = false;
+const outputTestsToConsole = true;
 
 new UnitTester("intLog10", "handles even powers of 10",
   () => {
@@ -88,5 +88,13 @@ new UnitTester("formatNumber", "uses the right prefixes for tiny numbers",
     UnitTester.assert_strict_equal(formatNumber(1 / (1000 * 1000 * 1000 * 1000)), "1 p");
     UnitTester.assert_strict_equal(formatNumber(1 / (1000 * 1000 * 1000 * 1000 * 1000)), "1 f");
     UnitTester.assert_strict_equal(formatNumber(1 / (1000 * 1000 * 1000 * 1000 * 1000 * 1000)), "1 a");
+  }
+).test(outputTestsToConsole);
+
+new UnitTester("formatNumber", "supports decimal places",
+  () => {
+    UnitTester.assert_strict_equal(formatNumber(1000, 1), "1.0 k");
+    UnitTester.assert_strict_equal(formatNumber(1100, 1), "1.1 k");
+    UnitTester.assert_strict_equal(formatNumber(900, 1), "0.9 k");
   }
 ).test(outputTestsToConsole);

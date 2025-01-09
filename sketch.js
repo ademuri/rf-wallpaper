@@ -133,7 +133,7 @@ function drawFrequencyLines() {
     adjustedX = gridWidth;
   }
   const mouseF = minF * Math.pow(10, adjustedX / gridWidth * (Math.log10(maxF) - Math.log10(minF)));
-  setValueDisplay("frequency", `${formatNumber(mouseF)}Hz`);
+  setValueDisplay("frequency", `${formatNumber(mouseF, 2)}Hz`);
 
   let offset = sideMargin;
   let prevOffset = sideMargin - decadeWidth;
@@ -198,7 +198,7 @@ function drawResistanceLines() {
     adjustedY = gridHeight;
   }
   const mouseR = maxR * Math.pow(10, adjustedY / gridHeight * (Math.log10(minR) - Math.log10(maxR)));
-  setValueDisplay("impedance", `${formatNumber(mouseR)}Ω`);
+  setValueDisplay("impedance", `${formatNumber(mouseR, 2)}Ω`);
 
   let offset = height - bottomMargin;
   let prevOffset = sideMargin - decadeWidth;
