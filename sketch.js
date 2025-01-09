@@ -278,9 +278,10 @@ function drawCapacitanceLines() {
   const maxC = 1 / (2 * Math.PI * minF * minR);
   const cornerC = 1 / (2 * Math.PI * maxF * minR);
 
-  const adjustedX = getGridRelativeMouseX();
-  const adjustedY = getGridRelativeMouseY();
-  // const mouseC = 1 / (2 * Math.PI * 
+  const mouseR = getMouseR();
+  const mouseF = getMouseF();
+  const mouseC = 1 / (2 * Math.PI * mouseF * mouseR);
+  setValueDisplay("capacitance", `${formatNumber(mouseC, 2)}F`);
 
   for (let majorCLog = intLog10(minC) + 1; majorCLog < intLog10(maxC); majorCLog++) {
     const majorC = Math.pow(10, majorCLog);
@@ -350,6 +351,11 @@ function drawInductanceLines() {
   const minL = minR / (2 * Math.PI * maxF);
   const maxL = maxR / (2 * Math.PI * minF);
   const cornerL = minR / (2 * Math.PI * minF);
+
+  const mouseR = getMouseR();
+  const mouseF = getMouseF();
+  const mouseL = mouseR / (2 * Math.PI * mouseF);
+  setValueDisplay("inductance", `${formatNumber(mouseL, 2)}H`);
 
   for (let majorLLog = intLog10(minL) + 1; majorLLog < intLog10(maxL); majorLLog++) {
     const majorL = Math.pow(10, majorLLog);
