@@ -270,6 +270,8 @@ function drawResistanceLines() {
 }
 
 function drawCapacitanceLines() {
+  const highlightMode = getHighlightMode(CAPACITANCE);
+
   // Z = 1 / (2 * pi * f * C)
   // C = 1 / (2 * pi * f * Z)
   // f = 1 / (2 * pi * C * Z)
@@ -308,11 +310,23 @@ function drawCapacitanceLines() {
         y2 = offsetForR(lineMaxR);
       }
 
-      let lineColor;
-      if (n === 1) {
-        lineColor = diagonalGridMajorColor;
-      } else {
-        lineColor = diagonalGridMinorColor;
+      let lineColor = n === 1 ? diagonalGridMajorColor : diagonalGridMinorColor;
+      if (highlightMode === MAJOR && n === 1) {
+        const currentCLog = Math.log10(currentC);
+        const prevCLog = Math.log10(majorC / 10);
+        const nextCLog = Math.log10(majorC * 10);
+        const mouseCLog = Math.log10(mouseC);
+        if (mouseCLog > (currentCLog + prevCLog) / 2 && mouseCLog < (nextCLog + currentCLog) / 2) {
+          lineColor = highlightColor;
+        }
+      } else if (highlightMode === MINOR) {
+        const currentCLog = Math.log10(currentC);
+        const mouseCLog = Math.log10(mouseC);
+        const nextCLog = Math.log10(majorC * (n + 1));
+        const prevCLog = n === 1 ? Math.log10(majorC * 9 / 10) : Math.log10(majorC * (n - 1));
+        if (mouseCLog > (currentCLog + prevCLog) / 2 && mouseCLog < (nextCLog + currentCLog) / 2) {
+          lineColor = highlightColor;
+        }
       }
 
       stroke(lineColor);
