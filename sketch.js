@@ -9,6 +9,7 @@ const RESISTANCE = "resistance";
 const CAPACITANCE = "capacitance";
 const INDUCTANCE = "inductance";
 
+const VALUE_SIGNIFICANT_FIGURES = 3;
 
 const minR = 0.01;
 const maxR = 1000 * 1000;
@@ -154,7 +155,7 @@ function setup() {
 function drawFrequencyLines() {
   const highlightMode = getHighlightMode(FREQUENCY);
 
-  setValueDisplay("frequency", `${formatNumber(getMouseF(), 2)}Hz`);
+  setValueDisplay("frequency", `${formatNumber(getMouseF(), VALUE_SIGNIFICANT_FIGURES)}Hz`);
 
   let offset = sideMargin;
   let prevOffset = sideMargin - decadeWidth;
@@ -212,7 +213,7 @@ function drawFrequencyLines() {
 function drawResistanceLines() {
   const highlightMode = getHighlightMode(RESISTANCE);
 
-  setValueDisplay("impedance", `${formatNumber(getMouseR(), 2)}Ω`);
+  setValueDisplay("impedance", `${formatNumber(getMouseR(), VALUE_SIGNIFICANT_FIGURES)}Ω`);
 
   let offset = height - bottomMargin;
   let prevOffset = sideMargin - decadeWidth;
@@ -281,7 +282,7 @@ function drawCapacitanceLines() {
   const mouseR = getMouseR();
   const mouseF = getMouseF();
   const mouseC = 1 / (2 * Math.PI * mouseF * mouseR);
-  setValueDisplay("capacitance", `${formatNumber(mouseC, 2)}F`);
+  setValueDisplay("capacitance", `${formatNumber(mouseC, VALUE_SIGNIFICANT_FIGURES)}F`);
 
   for (let majorCLog = intLog10(minC) + 1; majorCLog < intLog10(maxC); majorCLog++) {
     const majorC = Math.pow(10, majorCLog);
@@ -355,7 +356,7 @@ function drawInductanceLines() {
   const mouseR = getMouseR();
   const mouseF = getMouseF();
   const mouseL = mouseR / (2 * Math.PI * mouseF);
-  setValueDisplay("inductance", `${formatNumber(mouseL, 2)}H`);
+  setValueDisplay("inductance", `${formatNumber(mouseL, VALUE_SIGNIFICANT_FIGURES)}H`);
 
   for (let majorLLog = intLog10(minL) + 1; majorLLog < intLog10(maxL); majorLLog++) {
     const majorL = Math.pow(10, majorLLog);
