@@ -330,88 +330,71 @@ function drawInductanceLines() {
   // L = Z / (2 * pi * f)
   // f = Z / (2 * pi * L)
 
-  // First, draw lines which originate on the left hand side (min frequency)
-  const leftMaxL = maxR / (2 * Math.PI * minF);
-  const leftMinL = minR / (2 * Math.PI * minF);
+  // Calculate min and max inductance values for the entire chart.
+  const minL = minR / (2 * Math.PI * maxF);
+  const maxL = maxR / (2 * Math.PI * minF);
+  const cornerL = minR / (2 * Math.PI * minF);
 
-  for (let majorLLog = intLog10(leftMinL) + 1; majorLLog <= intLog10(leftMaxL); majorLLog++) {
+  for (let majorLLog = intLog10(minL) + 1; majorLLog < intLog10(maxL); majorLLog++) {
     const majorL = Math.pow(10, majorLLog);
-    // Z = 2 * pi * f * L
-    const lineMinZ = 2 * Math.PI * minF * majorL;
-    // f = Z / (2 * pi * L)
-    const lineMaxF = maxR / (2 * Math.PI * majorL);
 
-    stroke(diagonalGridMajorColor);
-    clippedLine(sideMargin, offsetForR(lineMinZ), offsetForF(lineMaxF), topMargin);
+    for (let n = 1; n <= 9; n++) {
+      const currentL = majorL * n;
 
-    {
-      push();
-      translate(sideMargin - fontSize, offsetForR(lineMinZ));
-      rotate(-45)
-      textAlign(RIGHT, TOP);
-      fill(diagonalGridMajorColor);
-      noStroke();
-      text(formatNumber(majorL) + "H", 0, 0);
-      pop();
-    }
+      // Calculate line coordinates based on whether the line originates on the left or bottom.
+      let x1, y1, x2, y2;
+      if (currentL > cornerL) {  // Originates on left side
+        const lineMinZ = 2 * Math.PI * minF * currentL;
+        const lineMaxF = maxR / (2 * Math.PI * currentL);
+        x1 = sideMargin;
+        y1 = offsetForR(lineMinZ);
+        x2 = offsetForF(lineMaxF);
+        y2 = topMargin;
+      } else {  // Originates on bottom
+        const lineMinF = minR / (2 * Math.PI * currentL);
+        const lineMaxR = 2 * Math.PI * maxF * currentL;
+        x1 = offsetForF(lineMinF);
+        y1 = height - bottomMargin;
+        x2 = width - sideMargin;
+        y2 = offsetForR(lineMaxR);
+      }
 
-    // Draw minor lines
-    stroke(diagonalGridMinorColor);
-    let n = 2;
-    for (let minorL = majorL * 2; minorL < majorL * 10; minorL += majorL) {
-      // Z = 2 * pi * f * L
-      const minorLineMinZ = 2 * Math.PI * minF * minorL;
-      // f = Z / (2 * pi * L)
-      const minorLineMaxF = maxR / (2 * Math.PI * minorL);
+      let lineColor;
+      if (n === 1) {
+        lineColor = diagonalGridMajorColor;
+      } else {
+        lineColor = diagonalGridMinorColor;
+      }
 
-      stroke(diagonalGridMinorColor);
-      clippedLine(sideMargin, offsetForR(minorLineMinZ), offsetForF(minorLineMaxF), topMargin);
-    }
-  }
+      stroke(lineColor);
+      clippedLine(x1, y1, x2, y2);
 
-  // Now, draw lines which originate on the bottom (min resistance)
-  const bottomMaxL = minR / (2 * Math.PI * minF);
-  // L = Z / (2 * pi * f)
-  const bottomMinL = minR / (2 * Math.PI * maxF);
+      // Draw labels only for major lines (n=1).
+      if (n === 1) {
+        let labelX, labelY;
+        if (currentL > cornerL) { // Originates left
+          labelX = sideMargin - fontSize;
+          labelY = offsetForR(2 * Math.PI * minF * currentL);
+        } else { // Originates bottom
+          labelX = offsetForF(minR / (2 * Math.PI * currentL)) - fontSize / 2;
+          labelY = height - bottomMargin + 5;
+        }
 
-  for (let majorLLog = intLog10(bottomMinL) + 1; majorLLog <= intLog10(bottomMaxL); majorLLog++) {
-    const majorL = Math.pow(10, majorLLog);
-    // f = Z / (2 * pi * L)
-    const lineMinF = minR / (2 * Math.PI * majorL);
-    // Z = 2 * pi * f * L
-    const lineMaxR = 2 * Math.PI * maxF * majorL;
-
-    stroke(diagonalGridMajorColor);
-    clippedLine(offsetForF(lineMinF), height - bottomMargin, width - sideMargin, offsetForR(lineMaxR));
-
-    {
-      push();
-      translate(offsetForF(lineMinF) - fontSize / 2, height - bottomMargin + 5);
-      rotate(-45)
-      textAlign(RIGHT, TOP);
-      fill(diagonalGridMajorColor);
-      noStroke();
-      text(formatNumber(majorL) + "H", 0, 0);
-      pop();
-    }
-
-    // Draw minor lines
-    stroke(diagonalGridMinorColor);
-    let n = 2;
-    for (let minorL = majorL * 2; minorL < majorL * 10; minorL += majorL) {
-      // Z = 2 * pi * f * L
-      const minorLineMaxZ = 2 * Math.PI * maxF * minorL;
-      // f = Z / (2 * pi * L)
-      const minorLineMinF = minR / (2 * Math.PI * minorL);
-
-      stroke(diagonalGridMinorColor);
-      clippedLine(offsetForF(minorLineMinF), height - bottomMargin, width - sideMargin, offsetForR(minorLineMaxZ));
+        push();
+        translate(labelX, labelY);
+        rotate(-45);
+        fill(diagonalGridMajorColor); // Keep Label color consistent
+        noStroke();
+        textAlign(RIGHT, TOP);
+        text(formatNumber(currentL) + "H", 0, 0);
+        pop();
+      }
     }
   }
 }
 
 function draw() {
-  drawCapacitanceLines();
+  // drawCapacitanceLines();
   drawInductanceLines();
   drawFrequencyLines();
   drawResistanceLines();
