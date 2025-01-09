@@ -49,6 +49,34 @@ function offsetForF(hz) {
   return (Math.log10(hz) - Math.log10(minF)) * decadeWidth + sideMargin;
 }
 
+function getGridRelativeMouseX() {
+  let adjustedX = mouseX - sideMargin;
+  if (adjustedX < 0) {
+    return 0
+  } else if (adjustedX > gridWidth) {
+    return gridWidth;
+  }
+  return adjustedX;
+}
+
+function getGridRelativeMouseY() {
+  let adjustedY = mouseY - topMargin;
+  if (adjustedY < 0) {
+    return 0;
+  } else if (adjustedY > gridHeight) {
+    return gridHeight;
+  }
+  return adjustedY;
+}
+
+function getMouseR() {
+  return maxR * Math.pow(10, getGridRelativeMouseY() / gridHeight * (Math.log10(minR) - Math.log10(maxR)));
+}
+
+function getMouseF() {
+  return minF * Math.pow(10, getGridRelativeMouseX() / gridWidth * (Math.log10(maxF) - Math.log10(minF)));
+}
+
 // Not general-purpose, only handles the specific clipping which occurs in this application.
 function clippedLine(x1, y1, x2, y2) {
   if (x2 < sideMargin) {
@@ -126,14 +154,7 @@ function setup() {
 function drawFrequencyLines() {
   const highlightMode = getHighlightMode(FREQUENCY);
 
-  let adjustedX = mouseX - sideMargin;
-  if (adjustedX < 0) {
-    adjustedX = 0;
-  } else if (adjustedX > gridWidth) {
-    adjustedX = gridWidth;
-  }
-  const mouseF = minF * Math.pow(10, adjustedX / gridWidth * (Math.log10(maxF) - Math.log10(minF)));
-  setValueDisplay("frequency", `${formatNumber(mouseF, 2)}Hz`);
+  setValueDisplay("frequency", `${formatNumber(getMouseF(), 2)}Hz`);
 
   let offset = sideMargin;
   let prevOffset = sideMargin - decadeWidth;
@@ -191,14 +212,7 @@ function drawFrequencyLines() {
 function drawResistanceLines() {
   const highlightMode = getHighlightMode(RESISTANCE);
 
-  let adjustedY = mouseY - topMargin;
-  if (adjustedY < 0) {
-    adjustedY = 0;
-  } else if (adjustedY > gridHeight) {
-    adjustedY = gridHeight;
-  }
-  const mouseR = maxR * Math.pow(10, adjustedY / gridHeight * (Math.log10(minR) - Math.log10(maxR)));
-  setValueDisplay("impedance", `${formatNumber(mouseR, 2)}Ω`);
+  setValueDisplay("impedance", `${formatNumber(getMouseR(), 2)}Ω`);
 
   let offset = height - bottomMargin;
   let prevOffset = sideMargin - decadeWidth;
@@ -263,6 +277,10 @@ function drawCapacitanceLines() {
   const minC = 1 / (2 * Math.PI * maxF * maxR);
   const maxC = 1 / (2 * Math.PI * minF * minR);
   const cornerC = 1 / (2 * Math.PI * maxF * minR);
+
+  const adjustedX = getGridRelativeMouseX();
+  const adjustedY = getGridRelativeMouseY();
+  // const mouseC = 1 / (2 * Math.PI * 
 
   for (let majorCLog = intLog10(minC) + 1; majorCLog < intLog10(maxC); majorCLog++) {
     const majorC = Math.pow(10, majorCLog);
