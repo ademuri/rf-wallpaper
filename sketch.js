@@ -179,33 +179,54 @@ function drawResistanceLines() {
   const highlightMode = getHighlightMode(RESISTANCE);
 
   let offset = height - bottomMargin;
+  let prevOffset = sideMargin - decadeWidth;
   for (let r = minR; r <= maxR; r = r * 10) {
-    if (highlightMode === MAJOR && mouseNearCanvas() && mouseY > offset - (decadeWidth / 2) && mouseY < offset + (decadeWidth / 2)) {
-      stroke(highlightColor);
+    const thisLineMajorHighlight = mouseNearCanvas() && mouseY > offset - (decadeWidth / 2) && mouseY < offset + (decadeWidth / 2);
+    if (highlightMode >= MAJOR && thisLineMajorHighlight) {
       fill(highlightColor);
     } else {
-      stroke(gridMajorColor);
       fill(gridMajorColor);
     }
-    line(sideMargin, offset, width - sideMargin, offset);
 
     noStroke();
     textAlign(RIGHT, CENTER);
     text(formatNumber(r) + "Ω", sideMargin - 5, offset)
 
-    if (r == maxR) {
-      break;
-    }
-
-    stroke(gridMinorColor);
-    let n = 2;
-    for (let minor = r * 2; minor < r * 10; minor += r) {
+    let n = 1;
+    let prevY = prevOffset - decadeOffsets.get(9);
+    for (let minor = r; minor < r * 10; minor += r) {
       const y = offset - decadeOffsets.get(n);
+      const nextY = offset - decadeOffsets.get(n + 1);
+      const thisLineMinorHighlight = mouseNearCanvas() &&
+        mouseY > (nextY + (y - nextY) / 2) &&
+        (mouseY < (y + (prevY - y) / 2));
+
+      if (n == 1) {
+        if (highlightMode === MAJOR && thisLineMajorHighlight) {
+          stroke(highlightColor);
+        } else if (highlightMode == MINOR && thisLineMinorHighlight) {
+          stroke(highlightColor);
+        } else {
+          stroke(gridMajorColor);
+        }
+      } else {
+        if (highlightMode === MINOR && thisLineMinorHighlight) {
+          stroke(highlightColor);
+        } else {
+          stroke(gridMinorColor);
+        }
+      }
       line(sideMargin, y, width - sideMargin, y);
 
+      if (r == maxR) {
+        break;
+      }
+
       n++;
+      prevY = y;
     }
 
+    prevOffset = offset;
     offset -= decadeWidth;
   }
   line(sideMargin, offset, width - sideMargin, offset);
