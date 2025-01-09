@@ -249,9 +249,6 @@ function drawCapacitanceLines() {
     // f = 1 / (2 * pi * C * Z)
     const lineMinF = 1 / (2 * Math.PI * majorC * maxR);
 
-    stroke(diagonalGridMajorColor);
-    clippedLine(width - sideMargin, offsetForR(lineMinZ), offsetForF(lineMinF), topMargin);
-
     // Draw label
     {
       push();
@@ -265,16 +262,21 @@ function drawCapacitanceLines() {
     }
 
     // Draw minor lines
-    stroke(diagonalGridMinorColor);
-    let n = 2;
-    for (let minorC = majorC * 2; minorC < majorC * 10; minorC += majorC) {
+    let n = 1;
+    for (let minorC = majorC; minorC < majorC * 10; minorC += majorC) {
       // Z = 1 / (2 * pi * f * C)
       const minorLineMinZ = 1 / (2 * Math.PI * maxF * minorC);
       // f = 1 / (2 * pi * C * Z)
       const minorLinMinF = 1 / (2 * Math.PI * minorC * maxR);
 
-      stroke(diagonalGridMinorColor);
+      if (n === 1) {
+        stroke(diagonalGridMajorColor);
+      } else {
+        stroke(diagonalGridMinorColor);
+      }
+
       clippedLine(width - sideMargin, offsetForR(minorLineMinZ), offsetForF(minorLinMinF), topMargin);
+      n++;
     }
   }
 
