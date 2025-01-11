@@ -2,7 +2,11 @@ import * as React from 'react';
 import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
 import { Color } from 'p5';
 
+type UpdateValueFunction = (value: number) => void;
+
 export function Sketch(p5: P5CanvasInstance) {
+  let setFrequency: UpdateValueFunction | null = null;
+
   function intLog10(number: number) {
     return Math.round(Math.log10(number));
   }
@@ -96,7 +100,7 @@ export function Sketch(p5: P5CanvasInstance) {
 
   let highlightColor: Color;
 
-  const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const decadeOffsets = new Map(decadeValues.map((x) => [x, Math.log10(x) * decadeWidth]));
 
   function getDecadeOffset(decade: number): number {
@@ -204,6 +208,9 @@ export function Sketch(p5: P5CanvasInstance) {
     const highlightMode = getHighlightMode(p5, FREQUENCY);
 
     setValueDisplay("frequency", `${formatNumber(getMouseF(p5), VALUE_SIGNIFICANT_FIGURES)}Hz`);
+    if (setFrequency !== null) {
+      setFrequency(getMouseF(p5));
+    }
 
     let offset = sideMargin;
     let prevOffset = sideMargin - decadeWidth;
@@ -525,14 +532,20 @@ export function Sketch(p5: P5CanvasInstance) {
     diagonalGridMajorColor = p5.color(64, 64, 64);
     diagonalGridMinorColor = p5.color(208, 208, 208);
     highlightColor = p5.color(255, 0, 0);
-  }
+  };
 
   p5.draw = () => {
     drawCapacitanceLines(p5);
     drawInductanceLines(p5);
     drawFrequencyLines(p5);
     drawResistanceLines(p5);
-  }
+  };
+
+  p5.updateWithProps = props => {
+    if (props.setFrequency) {
+      setFrequency = props.setFrequency as UpdateValueFunction;
+    }
+  };
 }
 
 export function P5Sketch() {

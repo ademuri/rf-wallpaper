@@ -6,7 +6,6 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  // TODO: fix react-p5 to support strict mode
   <React.StrictMode>
     <App />
   </React.StrictMode>
