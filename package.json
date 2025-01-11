@@ -5,6 +5,7 @@
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@p5-wrapper/react": "^4.4.2",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.5",
@@ -17,6 +18,9 @@
     "react-scripts": "5.0.1",
     "typescript": "^5.7.3",
     "web-vitals": "^4.2.4"
+  },
+  "overrides":{
+    "typescript": "^5.7.3"
   },
   "scripts": {
     "start": "react-scripts start",
