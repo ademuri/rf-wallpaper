@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
 import { Color } from 'p5';
 import { intLog10, formatNumber } from '../math/math';
@@ -67,7 +66,7 @@ export function Sketch(p5: P5CanvasInstance) {
   }
 
   function getGridRelativeMouseX(p5: { mouseX: number; }) {
-    let adjustedX = p5.mouseX - sideMargin;
+    const adjustedX = p5.mouseX - sideMargin;
     if (adjustedX < 0) {
       return 0
     } else if (adjustedX > gridWidth) {
@@ -77,7 +76,7 @@ export function Sketch(p5: P5CanvasInstance) {
   }
 
   function getGridRelativeMouseY(p5: { mouseY: number; }) {
-    let adjustedY = p5.mouseY - topMargin;
+    const adjustedY = p5.mouseY - topMargin;
     if (adjustedY < 0) {
       return 0;
     } else if (adjustedY > gridHeight) {
@@ -86,16 +85,16 @@ export function Sketch(p5: P5CanvasInstance) {
     return adjustedY;
   }
 
-  function getMouseR(p5: any) {
+  function getMouseR(p5: P5CanvasInstance) {
     return maxR * Math.pow(10, getGridRelativeMouseY(p5) / gridHeight * (Math.log10(minR) - Math.log10(maxR)));
   }
 
-  function getMouseF(p5: any) {
+  function getMouseF(p5: P5CanvasInstance) {
     return minF * Math.pow(10, getGridRelativeMouseX(p5) / gridWidth * (Math.log10(maxF) - Math.log10(minF)));
   }
 
   // Not general-purpose, only handles the specific clipping which occurs in this application.
-  function clippedLine(p5: { line: (arg0: any, arg1: any, arg2: any, arg3: any) => void; }, x1: number, y1: number, x2: number, y2: number) {
+  function clippedLine(p5: { line: (arg0: number, arg1: number, arg2: number, arg3: number) => void; }, x1: number, y1: number, x2: number, y2: number) {
     if (x2 < sideMargin) {
       if (y2 < topMargin) {
         throw new Error(`point too out-of-bounds: (${x2}, ${y2})`);
