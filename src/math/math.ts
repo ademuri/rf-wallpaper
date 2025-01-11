@@ -1,4 +1,3 @@
-
 export function intLog10(number: number): number {
   return Math.round(Math.log10(number));
 }
@@ -28,7 +27,7 @@ export function formatNumber(number: number, sigFigs = 0): string {
 
   let prefix = prefixes.get(magnitude);
 
-  let remainder = (number / Math.pow(1000, magnitude));
+  let remainder = number / Math.pow(1000, magnitude);
 
   let decimals = 0;
   if (sigFigs > 0) {
@@ -50,7 +49,9 @@ export function formatNumber(number: number, sigFigs = 0): string {
   }
 
   if (prefix === undefined) {
-    throw new Error(`No prefix found for number '${number}' - magnitude '${magnitude}'`);
+    throw new Error(
+      `No prefix found for number '${number}' - magnitude '${magnitude}'`,
+    );
   }
 
   return `${remainder} ${prefix}`;

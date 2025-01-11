@@ -1,9 +1,9 @@
-import React from 'react';
-import { useState } from 'react';
-import './App.css';
-import { Sketch } from './components/p5-sketch';
+import React from "react";
+import { useState } from "react";
+import "./App.css";
+import { Sketch } from "./components/p5-sketch";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
-import { formatNumber } from './math/math';
+import { formatNumber } from "./math/math";
 
 function App() {
   const [frequency, setFrequency] = useState(0);
@@ -14,7 +14,13 @@ function App() {
   return (
     <>
       <div id="sketch-container">
-        <ReactP5Wrapper sketch={Sketch} setFrequency={setFrequency} setResistance={setResistance} setCapacitance={setCapacitance} setInductance={setInductance} />
+        <ReactP5Wrapper
+          sketch={Sketch}
+          setFrequency={setFrequency}
+          setResistance={setResistance}
+          setCapacitance={setCapacitance}
+          setInductance={setInductance}
+        />
       </div>
       <div id="value-display">
         <div className="value-item">
@@ -33,7 +39,6 @@ function App() {
           <span className="label">Inductance: </span>
           <span className="value">{formatNumber(inductance, 3)}H</span>
         </div>
-
       </div>
     </>
   );

@@ -3,11 +3,10 @@ import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 
-
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
-  { ignores: ["dist" ] },
+  { ignores: ["dist"] },
   {
     languageOptions: {
       parserOptions: {
@@ -15,7 +14,7 @@ export default [
           jsx: true,
         },
       },
-      globals: globals.browser
+      globals: globals.browser,
     },
     settings: {
       react: {
@@ -25,6 +24,6 @@ export default [
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
-  pluginReact.configs.flat['jsx-runtime'],
+  pluginReact.configs.flat["jsx-runtime"],
   pluginReact.configs.flat.recommended,
 ];
