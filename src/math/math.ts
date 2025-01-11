@@ -4,6 +4,10 @@ export function intLog10(number: number): number {
 }
 
 export function formatNumber(number: number, sigFigs = 0): string {
+  if (number === 0) {
+    return "";
+  }
+
   const rawMagnitude = Math.log10(number) / 3;
   let magnitude = Math.trunc(rawMagnitude);
   if (rawMagnitude < 0) {
@@ -46,7 +50,7 @@ export function formatNumber(number: number, sigFigs = 0): string {
   }
 
   if (prefix === undefined) {
-    throw new Error(`No prefix found for number '${number}'`);
+    throw new Error(`No prefix found for number '${number}' - magnitude '${magnitude}'`);
   }
 
   return `${remainder} ${prefix}`;

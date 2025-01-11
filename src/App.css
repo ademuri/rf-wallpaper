@@ -36,3 +36,28 @@
     transform: rotate(360deg);
   }
 }
+
+#value-display {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  max-width: 200px;
+  font-size: 18px;
+}
+
+.value-item {
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.value {
+  color: #222;
+  text-align: right;
+  min-width: 80px;
+}

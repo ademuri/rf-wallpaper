@@ -7,6 +7,9 @@ type UpdateValueFunction = (value: number) => void;
 
 export function Sketch(p5: P5CanvasInstance) {
   let setFrequency: UpdateValueFunction | null = null;
+  let setResistance: UpdateValueFunction | null = null;
+  let setCapacitance: UpdateValueFunction | null = null;
+  let setInductance: UpdateValueFunction | null = null;
 
   // Highlight types
   const MAJOR = 1;
@@ -17,8 +20,6 @@ export function Sketch(p5: P5CanvasInstance) {
   const RESISTANCE = "resistance";
   const CAPACITANCE = "capacitance";
   const INDUCTANCE = "inductance";
-
-  const VALUE_SIGNIFICANT_FIGURES = 3;
 
   const minR = 0.01;
   const maxR = 1000 * 1000;
@@ -141,10 +142,6 @@ export function Sketch(p5: P5CanvasInstance) {
     }
   }
 
-  function setValueDisplay(name: string, value: string) {
-    // document.getElementById(`value-${name}`).textContent = value;
-  }
-
   function mouseNearCanvas(p5: { mouseX: number; mouseY: number; }) {
     return p5.mouseX > (decadeWidth / 2) && p5.mouseX < (width - decadeWidth / 2) &&
       p5.mouseY > (decadeWidth / 2) && p5.mouseY < (height - decadeWidth / 2);
@@ -153,7 +150,6 @@ export function Sketch(p5: P5CanvasInstance) {
   function drawFrequencyLines(p5: P5CanvasInstance) {
     const highlightMode = getHighlightMode(p5, FREQUENCY);
 
-    setValueDisplay("frequency", `${formatNumber(getMouseF(p5), VALUE_SIGNIFICANT_FIGURES)}Hz`);
     if (setFrequency !== null) {
       setFrequency(getMouseF(p5));
     }
@@ -214,7 +210,9 @@ export function Sketch(p5: P5CanvasInstance) {
   function drawResistanceLines(p5: P5CanvasInstance) {
     const highlightMode = getHighlightMode(p5, RESISTANCE);
 
-    setValueDisplay("impedance", `${formatNumber(getMouseR(p5), VALUE_SIGNIFICANT_FIGURES)}Ω`);
+    if (setResistance !== null) {
+      setResistance(getMouseR(p5));
+    }
 
     let offset = height - bottomMargin;
     let prevOffset = sideMargin - decadeWidth;
@@ -285,7 +283,9 @@ export function Sketch(p5: P5CanvasInstance) {
     const mouseR = getMouseR(p5);
     const mouseF = getMouseF(p5);
     const mouseC = 1 / (2 * Math.PI * mouseF * mouseR);
-    setValueDisplay("capacitance", `${formatNumber(mouseC, VALUE_SIGNIFICANT_FIGURES)}F`);
+    if (setCapacitance !== null) {
+      setCapacitance(mouseC);
+    }
 
     for (let majorCLog = intLog10(minC) + 1; majorCLog < intLog10(maxC); majorCLog++) {
       const majorC = Math.pow(10, majorCLog);
@@ -382,7 +382,9 @@ export function Sketch(p5: P5CanvasInstance) {
     const mouseR = getMouseR(p5);
     const mouseF = getMouseF(p5);
     const mouseL = mouseR / (2 * Math.PI * mouseF);
-    setValueDisplay("inductance", `${formatNumber(mouseL, VALUE_SIGNIFICANT_FIGURES)}H`);
+    if (setInductance !== null) {
+      setInductance(mouseL);
+    }
 
     for (let majorLLog = intLog10(minL) + 1; majorLLog < intLog10(maxL); majorLLog++) {
       const majorL = Math.pow(10, majorLLog);
@@ -490,6 +492,15 @@ export function Sketch(p5: P5CanvasInstance) {
   p5.updateWithProps = props => {
     if (props.setFrequency) {
       setFrequency = props.setFrequency as UpdateValueFunction;
+    }
+    if (props.setResistance) {
+      setResistance = props.setResistance as UpdateValueFunction;
+    }
+    if (props.setCapacitance) {
+      setCapacitance = props.setCapacitance as UpdateValueFunction;
+    }
+    if (props.setInductance) {
+      setInductance = props.setInductance as UpdateValueFunction;
     }
   };
 }
