@@ -1,12 +1,13 @@
-import React from 'react';
-import { ReactP5Wrapper } from "@p5-wrapper/react";
+import * as React from 'react';
+import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
+import { Color } from 'p5';
 
-export function Sketch(p5) {
-  function intLog10(number) {
+export function Sketch(p5: P5CanvasInstance) {
+  function intLog10(number: number) {
     return Math.round(Math.log10(number));
   }
 
-  function formatNumber(number, sigFigs = 0) {
+  function formatNumber(number: number, sigFigs = 0) {
     const rawMagnitude = Math.log10(number) / 3;
     let magnitude = Math.trunc(rawMagnitude);
     if (rawMagnitude < 0) {
@@ -36,13 +37,13 @@ export function Sketch(p5) {
         decimals = 0;
       }
     }
-    remainder = remainder.toFixed(decimals);
+    remainder = Number(remainder.toFixed(decimals));
 
     // Work around rounding errors with small values
-    if (remainder % 10 == 9) {
+    if (remainder % 10 === 9) {
       remainder++;
     }
-    if (remainder == 1000) {
+    if (remainder === 1000) {
       remainder = 1;
       magnitude++;
       prefix = prefixes.get(magnitude);
@@ -58,7 +59,6 @@ export function Sketch(p5) {
 
 
   // Highlight types
-  const NONE = 0;
   const MAJOR = 1;
   const MINOR = 2;
 
@@ -89,27 +89,33 @@ export function Sketch(p5) {
   const gridHeight = numRDecades * decadeWidth;
   const height = gridHeight + topMargin + bottomMargin;
 
-  const doHighlight = true;
+  let gridMajorColor: Color;
+  let gridMinorColor: Color;
+  let diagonalGridMajorColor: Color;
+  let diagonalGridMinorColor: Color;
 
-  let gridMajorColor;
-  let gridMinorColor;
-  let diagonalGridMajorColor;
-  let diagonalGridMinorColor;
-
-  let highlightColor;
+  let highlightColor: Color;
 
   const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const decadeOffsets = new Map(decadeValues.map((x) => [x, Math.log10(x) * decadeWidth]));
 
-  function offsetForR(r) {
+  function getDecadeOffset(decade: number): number {
+    const val = decadeOffsets.get(decade)
+    if (val === undefined) {
+      throw new Error(`Invalid decade: ${decade}`);
+    }
+    return val;
+  }
+
+  function offsetForR(r: number) {
     return (Math.log10(maxR) - Math.log10(r)) * decadeWidth + topMargin;
   }
 
-  function offsetForF(hz) {
+  function offsetForF(hz: number) {
     return (Math.log10(hz) - Math.log10(minF)) * decadeWidth + sideMargin;
   }
 
-  function getGridRelativeMouseX(p5) {
+  function getGridRelativeMouseX(p5: { mouseX: number; }) {
     let adjustedX = p5.mouseX - sideMargin;
     if (adjustedX < 0) {
       return 0
@@ -119,7 +125,7 @@ export function Sketch(p5) {
     return adjustedX;
   }
 
-  function getGridRelativeMouseY(p5) {
+  function getGridRelativeMouseY(p5: { mouseY: number; }) {
     let adjustedY = p5.mouseY - topMargin;
     if (adjustedY < 0) {
       return 0;
@@ -129,16 +135,16 @@ export function Sketch(p5) {
     return adjustedY;
   }
 
-  function getMouseR(p5) {
+  function getMouseR(p5: any) {
     return maxR * Math.pow(10, getGridRelativeMouseY(p5) / gridHeight * (Math.log10(minR) - Math.log10(maxR)));
   }
 
-  function getMouseF(p5) {
+  function getMouseF(p5: any) {
     return minF * Math.pow(10, getGridRelativeMouseX(p5) / gridWidth * (Math.log10(maxF) - Math.log10(minF)));
   }
 
   // Not general-purpose, only handles the specific clipping which occurs in this application.
-  function clippedLine(p5, x1, y1, x2, y2) {
+  function clippedLine(p5: { line: (arg0: any, arg1: any, arg2: any, arg3: any) => void; }, x1: number, y1: number, x2: number, y2: number) {
     if (x2 < sideMargin) {
       if (y2 < topMargin) {
         throw new Error(`point too out-of-bounds: (${x2}, ${y2})`);
@@ -168,11 +174,11 @@ export function Sketch(p5) {
     p5.line(x1, y1, x2, y2);
   }
 
-  function getHighlightMode(p5, name) {
+  function getHighlightMode(p5: P5CanvasInstance, name: string) {
     return 1;
     const formName = `${name}-highlight`;
     const form = document.querySelector(`#${formName}`);
-    const data = new FormData(form);
+    const data = new FormData(form as HTMLFormElement);
     switch (data.get(formName)) {
       case "minor":
         return 2;
@@ -185,17 +191,17 @@ export function Sketch(p5) {
     }
   }
 
-  function setValueDisplay(name, value) {
+  function setValueDisplay(name: string, value: string) {
     // document.getElementById(`value-${name}`).textContent = value;
   }
 
-  function mouseNearCanvas(p5) {
+  function mouseNearCanvas(p5: { mouseX: number; mouseY: number; }) {
     return p5.mouseX > (decadeWidth / 2) && p5.mouseX < (width - decadeWidth / 2) &&
       p5.mouseY > (decadeWidth / 2) && p5.mouseY < (height - decadeWidth / 2);
   }
 
-  function drawFrequencyLines(p5) {
-    const highlightMode = getHighlightMode(FREQUENCY);
+  function drawFrequencyLines(p5: P5CanvasInstance) {
+    const highlightMode = getHighlightMode(p5, FREQUENCY);
 
     setValueDisplay("frequency", `${formatNumber(getMouseF(p5), VALUE_SIGNIFICANT_FIGURES)}Hz`);
 
@@ -214,18 +220,18 @@ export function Sketch(p5) {
       p5.text(formatNumber(f) + "Hz", offset, topMargin - 10);
 
       let n = 1;
-      let prevX = prevOffset + decadeOffsets.get(9);
+      let prevX = prevOffset + getDecadeOffset(9);
       for (let minor = f; minor < f * 10; minor += f) {
-        const x = decadeOffsets.get(n) + offset
-        const nextX = decadeOffsets.get(n + 1) + offset;
+        const x = getDecadeOffset(n) + offset
+        const nextX = getDecadeOffset(n + 1) + offset;
         const thisLineMinorHighlight = mouseNearCanvas(p5) &&
           p5.mouseX > (prevX + (x - prevX) / 2) &&
           (p5.mouseX <= (x + (nextX - x) / 2));
 
-        if (n == 1) {
+        if (n === 1) {
           if (highlightMode === MAJOR && thisLineMajorHighlight) {
             p5.stroke(highlightColor);
-          } else if (highlightMode == MINOR && thisLineMinorHighlight) {
+          } else if (highlightMode === MINOR && thisLineMinorHighlight) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMajorColor);
@@ -239,7 +245,7 @@ export function Sketch(p5) {
         }
         p5.line(x, topMargin, x, height - bottomMargin);
 
-        if (f == maxF) {
+        if (f === maxF) {
           break;
         }
 
@@ -252,8 +258,8 @@ export function Sketch(p5) {
     }
   }
 
-  function drawResistanceLines(p5) {
-    const highlightMode = getHighlightMode(RESISTANCE);
+  function drawResistanceLines(p5: P5CanvasInstance) {
+    const highlightMode = getHighlightMode(p5, RESISTANCE);
 
     setValueDisplay("impedance", `${formatNumber(getMouseR(p5), VALUE_SIGNIFICANT_FIGURES)}Ω`);
 
@@ -272,18 +278,18 @@ export function Sketch(p5) {
       p5.text(formatNumber(r) + "Ω", sideMargin - 5, offset)
 
       let n = 1;
-      let prevY = prevOffset - decadeOffsets.get(9);
+      let prevY = prevOffset - getDecadeOffset(9);
       for (let minor = r; minor < r * 10; minor += r) {
-        const y = offset - decadeOffsets.get(n);
-        const nextY = offset - decadeOffsets.get(n + 1);
+        const y = offset - getDecadeOffset(n);
+        const nextY = offset - getDecadeOffset(n + 1);
         const thisLineMinorHighlight = mouseNearCanvas(p5) &&
           p5.mouseY > (nextY + (y - nextY) / 2) &&
           (p5.mouseY < (y + (prevY - y) / 2));
 
-        if (n == 1) {
+        if (n === 1) {
           if (highlightMode === MAJOR && thisLineMajorHighlight) {
             p5.stroke(highlightColor);
-          } else if (highlightMode == MINOR && thisLineMinorHighlight) {
+          } else if (highlightMode === MINOR && thisLineMinorHighlight) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMajorColor);
@@ -297,7 +303,7 @@ export function Sketch(p5) {
         }
         p5.line(sideMargin, y, width - sideMargin, y);
 
-        if (r == maxR) {
+        if (r === maxR) {
           break;
         }
 
@@ -311,8 +317,8 @@ export function Sketch(p5) {
     p5.line(sideMargin, offset, width - sideMargin, offset);
   }
 
-  function drawCapacitanceLines(p5) {
-    const highlightMode = getHighlightMode(CAPACITANCE);
+  function drawCapacitanceLines(p5: P5CanvasInstance) {
+    const highlightMode = getHighlightMode(p5, CAPACITANCE);
 
     // Z = 1 / (2 * pi * f * C)
     // C = 1 / (2 * pi * f * Z)
@@ -335,7 +341,7 @@ export function Sketch(p5) {
         const currentC = majorC * n;
 
         // Calculate line coordinates based on whether the line originates on the right or bottom.
-        let x1, y1, x2, y2;
+        let x1: number, y1: number, x2: number, y2: number;
         if (currentC < cornerC) {  // Originates on right side
           const lineMinZ = 1 / (2 * Math.PI * maxF * currentC);
           const lineMinF = 1 / (2 * Math.PI * currentC * maxR);
@@ -381,7 +387,7 @@ export function Sketch(p5) {
 
         // Draw labels only for major lines (n=1).
         if (n === 1) {
-          let labelX, labelY;
+          let labelX: number, labelY: number;
 
           if (currentC < cornerC) { // Originates Right
             labelX = width - sideMargin + fontSize - 5;
@@ -408,8 +414,8 @@ export function Sketch(p5) {
     }
   }
 
-  function drawInductanceLines(p5) {
-    const highlightMode = getHighlightMode(INDUCTANCE);
+  function drawInductanceLines(p5: P5CanvasInstance) {
+    const highlightMode = getHighlightMode(p5, INDUCTANCE);
 
     // Z = 2 * pi * f * L
     // L = Z / (2 * pi * f)
@@ -432,7 +438,7 @@ export function Sketch(p5) {
         const currentL = majorL * n;
 
         // Calculate line coordinates based on whether the line originates on the left or bottom.
-        let x1, y1, x2, y2;
+        let x1: number, y1: number, x2: number, y2: number;
         if (currentL > cornerL) {  // Originates on left side
           const lineMinZ = 2 * Math.PI * minF * currentL;
           const lineMaxF = maxR / (2 * Math.PI * currentL);
@@ -478,7 +484,7 @@ export function Sketch(p5) {
 
         // Draw labels only for major lines (n=1).
         if (n === 1) {
-          let labelX, labelY;
+          let labelX: number, labelY: number;
           if (currentL > cornerL) { // Originates left
             labelX = sideMargin - fontSize + 5;
             labelY = offsetForR(2 * Math.PI * minF * currentL);
@@ -529,8 +535,6 @@ export function Sketch(p5) {
   }
 }
 
-function P5Sketch() {
+export function P5Sketch() {
   return <ReactP5Wrapper sketch={Sketch} />;
 }
-
-export default P5Sketch;

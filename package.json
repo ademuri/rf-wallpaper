@@ -15,11 +15,12 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-scripts": "5.0.1",
+    "typescript": "^5.7.3",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "tsc && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -42,6 +43,8 @@
     ]
   },
   "devDependencies": {
+    "@types/p5": "^1.7.6",
     "webpack-cli": "^6.0.1"
-  }
+  },
+  "type": "module"
 }
