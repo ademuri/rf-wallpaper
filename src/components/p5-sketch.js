@@ -1,8 +1,7 @@
 import React from 'react';
-import Sketch from 'react-p5';
-import { useEffect, useId } from 'react';
+import { ReactP5Wrapper } from "@p5-wrapper/react";
 
-function P5Sketch() {
+export function Sketch(p5) {
   function intLog10(number) {
     return Math.round(Math.log10(number));
   }
@@ -505,11 +504,10 @@ function P5Sketch() {
     }
   }
 
-  const setup = (p5, canvasParentRef) => {
+  p5.setup = () => {
     p5.angleMode(p5.DEGREES);
 
-    p5.createCanvas(width, height).parent(canvasParentRef);
-    // canvas.parent(canvasParentRef);
+    p5.createCanvas(width, height);
     p5.background(250);
 
     p5.textSize(fontSize);
@@ -523,16 +521,16 @@ function P5Sketch() {
     highlightColor = p5.color(255, 0, 0);
   }
 
-  const draw = (p5) => {
+  p5.draw = () => {
     drawCapacitanceLines(p5);
     drawInductanceLines(p5);
     drawFrequencyLines(p5);
     drawResistanceLines(p5);
   }
+}
 
-  return (
-    <Sketch setup={setup} draw={draw} />
-  )
+function P5Sketch() {
+  return <ReactP5Wrapper sketch={Sketch} />;
 }
 
 export default P5Sketch;
