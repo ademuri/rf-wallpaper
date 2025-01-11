@@ -1,52 +1,8 @@
 import * as React from 'react';
 import { ReactP5Wrapper } from "@p5-wrapper/react";
+import { intLog10, formatNumber } from '../math/math';
 export function Sketch(p5) {
-    function intLog10(number) {
-        return Math.round(Math.log10(number));
-    }
-    function formatNumber(number, sigFigs) {
-        if (sigFigs === void 0) { sigFigs = 0; }
-        var rawMagnitude = Math.log10(number) / 3;
-        var magnitude = Math.trunc(rawMagnitude);
-        if (rawMagnitude < 0) {
-            magnitude--;
-        }
-        var prefixes = new Map([
-            [-6, "a"],
-            [-5, "f"],
-            [-4, "p"],
-            [-3, "n"],
-            [-2, "μ"],
-            [-1, "m"],
-            [0, ""],
-            [1, "k"],
-            [2, "M"],
-            [3, "G"],
-        ]);
-        var prefix = prefixes.get(magnitude);
-        var remainder = (number / Math.pow(1000, magnitude));
-        var decimals = 0;
-        if (sigFigs > 0) {
-            decimals = sigFigs - intLog10(remainder) - 1;
-            if (decimals < 1) {
-                decimals = 0;
-            }
-        }
-        remainder = Number(remainder.toFixed(decimals));
-        // Work around rounding errors with small values
-        if (remainder % 10 === 9) {
-            remainder++;
-        }
-        if (remainder === 1000) {
-            remainder = 1;
-            magnitude++;
-            prefix = prefixes.get(magnitude);
-        }
-        if (prefix === undefined) {
-            return number;
-        }
-        return "".concat(remainder, " ").concat(prefix);
-    }
+    var setFrequency = null;
     // Highlight types
     var MAJOR = 1;
     var MINOR = 2;
@@ -76,7 +32,7 @@ export function Sketch(p5) {
     var diagonalGridMajorColor;
     var diagonalGridMinorColor;
     var highlightColor;
-    var decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    var decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
     var decadeOffsets = new Map(decadeValues.map(function (x) { return [x, Math.log10(x) * decadeWidth]; }));
     function getDecadeOffset(decade) {
         var val = decadeOffsets.get(decade);
@@ -172,6 +128,9 @@ export function Sketch(p5) {
     function drawFrequencyLines(p5) {
         var highlightMode = getHighlightMode(p5, FREQUENCY);
         setValueDisplay("frequency", "".concat(formatNumber(getMouseF(p5), VALUE_SIGNIFICANT_FIGURES), "Hz"));
+        if (setFrequency !== null) {
+            setFrequency(getMouseF(p5));
+        }
         var offset = sideMargin;
         var prevOffset = sideMargin - decadeWidth;
         for (var f = minF; f <= maxF; f = f * 10) {
@@ -472,6 +431,11 @@ export function Sketch(p5) {
         drawInductanceLines(p5);
         drawFrequencyLines(p5);
         drawResistanceLines(p5);
+    };
+    p5.updateWithProps = function (props) {
+        if (props.setFrequency) {
+            setFrequency = props.setFrequency;
+        }
     };
 }
 export function P5Sketch() {

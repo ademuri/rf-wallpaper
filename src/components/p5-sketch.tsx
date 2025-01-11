@@ -1,66 +1,12 @@
 import * as React from 'react';
 import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
 import { Color } from 'p5';
+import { intLog10, formatNumber } from '../math/math';
 
 type UpdateValueFunction = (value: number) => void;
 
 export function Sketch(p5: P5CanvasInstance) {
   let setFrequency: UpdateValueFunction | null = null;
-
-  function intLog10(number: number) {
-    return Math.round(Math.log10(number));
-  }
-
-  function formatNumber(number: number, sigFigs = 0) {
-    const rawMagnitude = Math.log10(number) / 3;
-    let magnitude = Math.trunc(rawMagnitude);
-    if (rawMagnitude < 0) {
-      magnitude--;
-    }
-    const prefixes = new Map([
-      [-6, "a"],
-      [-5, "f"],
-      [-4, "p"],
-      [-3, "n"],
-      [-2, "μ"],
-      [-1, "m"],
-      [0, ""],
-      [1, "k"],
-      [2, "M"],
-      [3, "G"],
-    ]);
-
-    let prefix = prefixes.get(magnitude);
-
-    let remainder = (number / Math.pow(1000, magnitude));
-
-    let decimals = 0;
-    if (sigFigs > 0) {
-      decimals = sigFigs - intLog10(remainder) - 1;
-      if (decimals < 1) {
-        decimals = 0;
-      }
-    }
-    remainder = Number(remainder.toFixed(decimals));
-
-    // Work around rounding errors with small values
-    if (remainder % 10 === 9) {
-      remainder++;
-    }
-    if (remainder === 1000) {
-      remainder = 1;
-      magnitude++;
-      prefix = prefixes.get(magnitude);
-    }
-
-
-    if (prefix === undefined) {
-      return number;
-    }
-
-    return `${remainder} ${prefix}`;
-  }
-
 
   // Highlight types
   const MAJOR = 1;
