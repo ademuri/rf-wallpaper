@@ -1,3 +1,4 @@
+import React from 'react';
 import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
 import { Color } from 'p5';
 import { intLog10, formatNumber } from '../math/math';

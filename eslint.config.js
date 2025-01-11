@@ -17,14 +17,14 @@ export default [
       },
       globals: globals.browser
     },
-    settings: {          // Add the settings object
+    settings: {
       react: {
-        version: "detect", // Tells eslint-plugin-react to automatically detect the version of React to use
+        version: "detect",
       },
     },
   },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
   pluginReact.configs.flat['jsx-runtime'],
+  pluginReact.configs.flat.recommended,
 ];
