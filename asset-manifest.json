@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/rf-wallpaper/static/css/main.49c52fa4.css",
-    "main.js": "/rf-wallpaper/static/js/main.f1c49c3e.js",
+    "main.css": "/rf-wallpaper/static/css/main.e07f56f9.css",
+    "main.js": "/rf-wallpaper/static/js/main.6fe9cd8a.js",
     "static/js/568.f9659a8a.chunk.js": "/rf-wallpaper/static/js/568.f9659a8a.chunk.js",
     "index.html": "/rf-wallpaper/index.html",
-    "main.49c52fa4.css.map": "/rf-wallpaper/static/css/main.49c52fa4.css.map",
-    "main.f1c49c3e.js.map": "/rf-wallpaper/static/js/main.f1c49c3e.js.map",
+    "main.e07f56f9.css.map": "/rf-wallpaper/static/css/main.e07f56f9.css.map",
+    "main.6fe9cd8a.js.map": "/rf-wallpaper/static/js/main.6fe9cd8a.js.map",
     "568.f9659a8a.chunk.js.map": "/rf-wallpaper/static/js/568.f9659a8a.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.49c52fa4.css",
-    "static/js/main.f1c49c3e.js"
+    "static/css/main.e07f56f9.css",
+    "static/js/main.6fe9cd8a.js"
   ]
 }
