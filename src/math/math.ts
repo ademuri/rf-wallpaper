@@ -1,3 +1,44 @@
+import { Unit, ValueHighlight } from "../types";
+
+const prefixes = new Map([
+  [-6, "a"],
+  [-5, "f"],
+  [-4, "p"],
+  [-3, "n"],
+  [-2, "μ"],
+  [-1, "m"],
+  [0, ""],
+  [1, "k"],
+  [2, "M"],
+  [3, "G"],
+]);
+const reversePrefixes = new Map([
+  ["a", -6],
+  ["f", -5],
+  ["p", -4],
+  ["n", -3],
+  ["μ", -2],
+  ["u", -2],
+  ["m", -1],
+  ["", 0],
+  ["k", 1],
+  ["M", 2],
+  ["G", 3],
+]);
+
+
+
+const units = new Map([
+  ["hz", Unit.Frequency],
+  // This uses the lowercase form of omega - even though a user (probably)
+  // wouldn't use it, it matches simply lowercasing the text and checking the
+  // suffix below.
+  ["ω", Unit.Resistance],
+  ["r", Unit.Resistance],
+  ["f", Unit.Capacitance],
+  ["h", Unit.Inductance],
+]);
+
 export function intLog10(number: number): number {
   return Math.round(Math.log10(number));
 }
@@ -12,18 +53,6 @@ export function formatNumber(number: number, sigFigs = 0): string {
   if (rawMagnitude < 0) {
     magnitude--;
   }
-  const prefixes = new Map([
-    [-6, "a"],
-    [-5, "f"],
-    [-4, "p"],
-    [-3, "n"],
-    [-2, "μ"],
-    [-1, "m"],
-    [0, ""],
-    [1, "k"],
-    [2, "M"],
-    [3, "G"],
-  ]);
 
   let prefix = prefixes.get(magnitude);
 
@@ -55,4 +84,49 @@ export function formatNumber(number: number, sigFigs = 0): string {
   }
 
   return `${remainder} ${prefix}`;
+}
+
+export function parseNumber(text: string): ValueHighlight | null {
+  text = text.trim();
+  if (text.length === 0) {
+    return null;
+  }
+
+  const valueHighlight: ValueHighlight = {
+    unit: Unit.None,
+    value: 0,
+    // Note: trimmed but not cannonicalized
+    display: text,
+  };
+
+  for (const [name, unit] of units) {
+    if (text.toLowerCase().endsWith(name)) {
+      valueHighlight.unit = unit;
+      text = text.slice(0, -name.length);
+      break;
+    }
+  }
+
+  text.trim();
+  if (!text.match(/[\wμ]$/)) {
+    valueHighlight.value = Number(text);
+    return valueHighlight;
+  }
+
+  const prefix = text.at(text.length - 1);
+  let prefixValue: number|null = null;
+  for (const [name, value] of reversePrefixes) {
+    if (prefix === name) {
+      prefixValue = value;
+      break;
+    }
+  }
+
+  if (prefixValue === null) {
+    return null;
+  }
+  
+  valueHighlight.value = Number(text.slice(0, -1)) * Math.pow(1000, prefixValue);
+
+  return valueHighlight;
 }

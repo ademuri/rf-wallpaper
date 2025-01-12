@@ -2,7 +2,7 @@ import React from "react";
 import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
 import { Color } from "p5";
 import { intLog10, formatNumber } from "../math/math";
-import {HighlightMode} from "../types";
+import { HighlightMode, ValueHighlight, Unit } from "../types";
 
 type UpdateValueFunction = (value: number) => void;
 
@@ -16,6 +16,8 @@ export function Sketch(p5: P5CanvasInstance) {
   let resistanceHighlightMode: HighlightMode = HighlightMode.NONE;
   let capacitanceHighlightMode: HighlightMode = HighlightMode.NONE;
   let inductanceHighlightMode: HighlightMode = HighlightMode.NONE;
+
+  let highlights: ValueHighlight[] = [];
 
   const minR = 0.01;
   const maxR = 1000 * 1000;
@@ -42,6 +44,10 @@ export function Sketch(p5: P5CanvasInstance) {
   let diagonalGridMinorColor: Color;
 
   let highlightColor: Color;
+  let manualHighlightColor: Color;
+
+  const defaultStrokeWeight = 1;
+  const highlightStrokeWeight = 2;
 
   const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const decadeOffsets = new Map(
@@ -166,7 +172,10 @@ export function Sketch(p5: P5CanvasInstance) {
         mouseNearCanvas(p5) &&
         p5.mouseX > offset - decadeWidth / 2 &&
         p5.mouseX < offset + decadeWidth / 2;
-      if (frequencyHighlightMode >= HighlightMode.MAJOR && thisLineMajorHighlight) {
+      if (
+        frequencyHighlightMode >= HighlightMode.MAJOR &&
+        thisLineMajorHighlight
+      ) {
         p5.fill(highlightColor);
       } else {
         p5.fill(gridMajorColor);
@@ -187,15 +196,24 @@ export function Sketch(p5: P5CanvasInstance) {
           p5.mouseX <= x + (nextX - x) / 2;
 
         if (n === 1) {
-          if (frequencyHighlightMode === HighlightMode.MAJOR && thisLineMajorHighlight) {
+          if (
+            frequencyHighlightMode === HighlightMode.MAJOR &&
+            thisLineMajorHighlight
+          ) {
             p5.stroke(highlightColor);
-          } else if (frequencyHighlightMode === HighlightMode.MINOR && thisLineMinorHighlight) {
+          } else if (
+            frequencyHighlightMode === HighlightMode.MINOR &&
+            thisLineMinorHighlight
+          ) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMajorColor);
           }
         } else {
-          if (frequencyHighlightMode === HighlightMode.MINOR && thisLineMinorHighlight) {
+          if (
+            frequencyHighlightMode === HighlightMode.MINOR &&
+            thisLineMinorHighlight
+          ) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMinorColor);
@@ -228,10 +246,15 @@ export function Sketch(p5: P5CanvasInstance) {
         mouseNearCanvas(p5) &&
         p5.mouseY > offset - decadeWidth / 2 &&
         p5.mouseY < offset + decadeWidth / 2;
-      if (resistanceHighlightMode >= HighlightMode.MAJOR && thisLineMajorHighlight) {
+      if (
+        resistanceHighlightMode >= HighlightMode.MAJOR &&
+        thisLineMajorHighlight
+      ) {
         p5.fill(highlightColor);
+        p5.strokeWeight(highlightStrokeWeight);
       } else {
         p5.fill(gridMajorColor);
+        p5.strokeWeight(defaultStrokeWeight);
       }
 
       p5.noStroke();
@@ -249,18 +272,32 @@ export function Sketch(p5: P5CanvasInstance) {
           p5.mouseY < y + (prevY - y) / 2;
 
         if (n === 1) {
-          if (resistanceHighlightMode === HighlightMode.MAJOR && thisLineMajorHighlight) {
+          if (
+            resistanceHighlightMode === HighlightMode.MAJOR &&
+            thisLineMajorHighlight
+          ) {
             p5.stroke(highlightColor);
-          } else if (resistanceHighlightMode === HighlightMode.MINOR && thisLineMinorHighlight) {
+            p5.strokeWeight(highlightStrokeWeight);
+          } else if (
+            resistanceHighlightMode === HighlightMode.MINOR &&
+            thisLineMinorHighlight
+          ) {
             p5.stroke(highlightColor);
+            p5.strokeWeight(highlightStrokeWeight);
           } else {
             p5.stroke(gridMajorColor);
+            p5.strokeWeight(defaultStrokeWeight);
           }
         } else {
-          if (resistanceHighlightMode === HighlightMode.MINOR && thisLineMinorHighlight) {
+          if (
+            resistanceHighlightMode === HighlightMode.MINOR &&
+            thisLineMinorHighlight
+          ) {
             p5.stroke(highlightColor);
+            p5.strokeWeight(highlightStrokeWeight);
           } else {
             p5.stroke(gridMinorColor);
+            p5.strokeWeight(defaultStrokeWeight);
           }
         }
         p5.line(sideMargin, y, width - sideMargin, y);
@@ -342,7 +379,11 @@ export function Sketch(p5: P5CanvasInstance) {
           }
         }
 
-        if (capacitanceHighlightMode === HighlightMode.MAJOR && n === 1 && highlightMajor) {
+        if (
+          capacitanceHighlightMode === HighlightMode.MAJOR &&
+          n === 1 &&
+          highlightMajor
+        ) {
           lineColor = highlightColor;
         } else if (capacitanceHighlightMode === HighlightMode.MINOR) {
           const currentCLog = Math.log10(currentC);
@@ -460,7 +501,11 @@ export function Sketch(p5: P5CanvasInstance) {
           }
         }
 
-        if (inductanceHighlightMode === HighlightMode.MAJOR && n === 1 && highlightMajor) {
+        if (
+          inductanceHighlightMode === HighlightMode.MAJOR &&
+          n === 1 &&
+          highlightMajor
+        ) {
           lineColor = highlightColor;
         } else if (inductanceHighlightMode === HighlightMode.MINOR) {
           const currentLLog = Math.log10(currentL);
@@ -511,6 +556,45 @@ export function Sketch(p5: P5CanvasInstance) {
     }
   }
 
+  function drawResistanceHighlight(highlight: ValueHighlight) {
+    if (highlight.unit !== Unit.Resistance) {
+      throw new Error(
+        `Got incorrect highlight type in drawResistanceHighlight: ${highlight}`,
+      );
+    }
+    const y = offsetForR(highlight.value);
+    p5.stroke(manualHighlightColor);
+    p5.line(sideMargin, y, width - sideMargin, y);
+  }
+
+  function drawFrequencyHighlight(highlight: ValueHighlight) {
+    if (highlight.unit !== Unit.Frequency) {
+      throw new Error(
+        `Got incorrect highlight type in drawFrequencyHighlight: ${highlight}`,
+      );
+    }
+    const x = offsetForF(highlight.value);
+    p5.stroke(manualHighlightColor);
+    p5.line(x, topMargin, x, height - bottomMargin);
+  }
+
+  function drawHighlights() {
+    for (const highlight of highlights) {
+      switch (highlight.unit) {
+        case Unit.Resistance:
+          drawResistanceHighlight(highlight);
+          break;
+        case Unit.Frequency:
+          drawFrequencyHighlight(highlight);
+          break;
+        default:
+          throw new Error(
+            `Got incorrect highlight type in drawHighlights: ${highlight}`,
+          );
+      }
+    }
+  }
+
   p5.setup = () => {
     p5.angleMode(p5.DEGREES);
 
@@ -526,13 +610,16 @@ export function Sketch(p5: P5CanvasInstance) {
     diagonalGridMajorColor = p5.color(64, 64, 64);
     diagonalGridMinorColor = p5.color(208, 208, 208);
     highlightColor = p5.color(255, 0, 0);
+    manualHighlightColor = p5.color(0, 255, 0);
   };
 
   p5.draw = () => {
+    p5.clear();
     drawCapacitanceLines(p5);
     drawInductanceLines(p5);
     drawFrequencyLines(p5);
     drawResistanceLines(p5);
+    drawHighlights();
   };
 
   p5.updateWithProps = (props) => {
@@ -555,10 +642,15 @@ export function Sketch(p5: P5CanvasInstance) {
       resistanceHighlightMode = props.resistanceHighlightMode as HighlightMode;
     }
     if (props.capacitanceHighlightMode !== undefined) {
-      capacitanceHighlightMode = props.capacitanceHighlightMode as HighlightMode;
+      capacitanceHighlightMode =
+        props.capacitanceHighlightMode as HighlightMode;
     }
     if (props.inductanceHighlightMode !== undefined) {
       inductanceHighlightMode = props.inductanceHighlightMode as HighlightMode;
+    }
+    if (props.highlights !== undefined) {
+      highlights = props.highlights as ValueHighlight[];
+      console.log(highlights);
     }
   };
 }

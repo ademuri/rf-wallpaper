@@ -3,3 +3,11 @@ export enum HighlightMode {
   MAJOR,
   MINOR,
 };
+
+export enum Unit {
+  None = 0,
+  Frequency,
+  Resistance,
+  Inductance,
+  Capacitance,
+};

@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  font-size: 18px;
 }
 
 .App-logo {
@@ -43,7 +44,13 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   max-width: 200px;
-  font-size: 18px;
+}
+
+#highlight-values {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
 .value-item {
@@ -65,10 +72,17 @@
 #highlight-forms {
   display: flex;
   flex-direction: row;
-  /* or just 'row' */
 }
 
-#highlight-forms>form {
-  /* Add some spacing between the forms */
+#highlight-forms > form {
+  margin-right: 10px;
+}
+
+#values-container {
+  display: flex;
+  flex-direction: row;
+}
+
+#values-container > div {
   margin-right: 10px;
 }

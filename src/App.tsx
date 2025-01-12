@@ -4,8 +4,9 @@ import "./App.css";
 import { Sketch } from "./components/p5-sketch";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { formatNumber } from "./math/math";
-import { HighlightMode } from "./types";
+import { HighlightMode, ValueHighlight } from "./types";
 import { HighlightModePicker } from "./components/highlight-mode-picker";
+import { ValueHighlightPicker } from "./components/value-highlight-picker";
 
 function App() {
   const [frequency, setFrequency] = useState(0);
@@ -27,6 +28,8 @@ function App() {
   );
   const [allHighlightMode, setAllHighlightMode] =
     useState<HighlightMode | null>(HighlightMode.NONE);
+
+  const [valueHighlights, setValueHighlights] = useState<ValueHighlight[]>([]);
 
   const updateAllHighlightMode = (newMode: HighlightMode | null) => {
     if (
@@ -82,6 +85,7 @@ function App() {
           resistanceHighlightMode={resistanceHighlightMode}
           capacitanceHighlightMode={capacitanceHighlightMode}
           inductanceHighlightMode={inductanceHighlightMode}
+          highlights={valueHighlights}
         />
       </div>
       <div id="highlight-forms">
@@ -111,22 +115,30 @@ function App() {
           setMode={setAllHighlightModes}
         />
       </div>
-      <div id="value-display">
-        <div className="value-item">
-          <span className="label">Frequency: </span>
-          <span className="value">{formatNumber(frequency, 3)}Hz</span>
+      <div id="values-container">
+        <div id="value-display">
+          <div className="value-item">
+            <span className="label">Frequency: </span>
+            <span className="value">{formatNumber(frequency, 3)}Hz</span>
+          </div>
+          <div className="value-item">
+            <span className="label">Resistance: </span>
+            <span className="value">{formatNumber(resistance, 3)}Ω</span>
+          </div>
+          <div className="value-item">
+            <span className="label">Capacitance: </span>
+            <span className="value">{formatNumber(capacitance, 3)}F</span>
+          </div>
+          <div className="value-item">
+            <span className="label">Inductance: </span>
+            <span className="value">{formatNumber(inductance, 3)}H</span>
+          </div>
         </div>
-        <div className="value-item">
-          <span className="label">Resistance: </span>
-          <span className="value">{formatNumber(resistance, 3)}Ω</span>
-        </div>
-        <div className="value-item">
-          <span className="label">Capacitance: </span>
-          <span className="value">{formatNumber(capacitance, 3)}F</span>
-        </div>
-        <div className="value-item">
-          <span className="label">Inductance: </span>
-          <span className="value">{formatNumber(inductance, 3)}H</span>
+        <div id="highlight-values">
+          <ValueHighlightPicker
+            valueHighlights={valueHighlights}
+            setValueHighlights={setValueHighlights}
+          />
         </div>
       </div>
     </>

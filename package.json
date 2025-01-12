@@ -54,6 +54,7 @@
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "@types/p5": "^1.7.6",
+    "canvas": "^2.11.2",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.3",
