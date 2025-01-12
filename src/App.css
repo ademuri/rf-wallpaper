@@ -61,3 +61,14 @@
   text-align: right;
   min-width: 80px;
 }
+
+#highlight-forms {
+  display: flex;
+  flex-direction: row;
+  /* or just 'row' */
+}
+
+#highlight-forms>form {
+  /* Add some spacing between the forms */
+  margin-right: 10px;
+}

@@ -2,6 +2,7 @@ import React from "react";
 import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
 import { Color } from "p5";
 import { intLog10, formatNumber } from "../math/math";
+import {HighlightMode} from "../types";
 
 type UpdateValueFunction = (value: number) => void;
 
@@ -10,6 +11,11 @@ export function Sketch(p5: P5CanvasInstance) {
   let setResistance: UpdateValueFunction | null = null;
   let setCapacitance: UpdateValueFunction | null = null;
   let setInductance: UpdateValueFunction | null = null;
+
+  let frequencyHighlightMode: HighlightMode = 0;
+  let resistanceHighlightMode: HighlightMode = 0;
+  let capacitanceHighlightMode: HighlightMode = 0;
+  let inductanceHighlightMode: HighlightMode = 0;
 
   // Highlight types
   const MAJOR = 1;
@@ -176,8 +182,6 @@ export function Sketch(p5: P5CanvasInstance) {
   }
 
   function drawFrequencyLines(p5: P5CanvasInstance) {
-    const highlightMode = getHighlightMode(p5, FREQUENCY);
-
     if (setFrequency !== null) {
       setFrequency(getMouseF(p5));
     }
@@ -189,7 +193,7 @@ export function Sketch(p5: P5CanvasInstance) {
         mouseNearCanvas(p5) &&
         p5.mouseX > offset - decadeWidth / 2 &&
         p5.mouseX < offset + decadeWidth / 2;
-      if (highlightMode >= MAJOR && thisLineMajorHighlight) {
+      if (frequencyHighlightMode >= HighlightMode.MAJOR && thisLineMajorHighlight) {
         p5.fill(highlightColor);
       } else {
         p5.fill(gridMajorColor);
@@ -210,15 +214,15 @@ export function Sketch(p5: P5CanvasInstance) {
           p5.mouseX <= x + (nextX - x) / 2;
 
         if (n === 1) {
-          if (highlightMode === MAJOR && thisLineMajorHighlight) {
+          if (frequencyHighlightMode === MAJOR && thisLineMajorHighlight) {
             p5.stroke(highlightColor);
-          } else if (highlightMode === MINOR && thisLineMinorHighlight) {
+          } else if (frequencyHighlightMode === MINOR && thisLineMinorHighlight) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMajorColor);
           }
         } else {
-          if (highlightMode === MINOR && thisLineMinorHighlight) {
+          if (frequencyHighlightMode === MINOR && thisLineMinorHighlight) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMinorColor);
@@ -576,6 +580,18 @@ export function Sketch(p5: P5CanvasInstance) {
     }
     if (props.setInductance) {
       setInductance = props.setInductance as UpdateValueFunction;
+    }
+    if (props.frequencyHighlightMode) {
+      frequencyHighlightMode = props.frequencyHighlightMode as HighlightMode;
+    }
+    if (props.resistanceHighlightMode) {
+      resistanceHighlightMode = props.resistanceHighlightMode as HighlightMode;
+    }
+    if (props.capacitanceHighlightMode) {
+      capacitanceHighlightMode = props.capacitanceHighlightMode as HighlightMode;
+    }
+    if (props.inductanceHighlightMode) {
+      inductanceHighlightMode = props.inductanceHighlightMode as HighlightMode;
     }
   };
 }
