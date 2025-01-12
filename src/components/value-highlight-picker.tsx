@@ -3,7 +3,8 @@ import { useId } from "react";
 import { ValueHighlight } from "../types";
 import { useState } from "react";
 import { parseNumber } from "../math/math";
-import { ChromePicker, ColorResult } from 'react-color';
+import { ColorPicker, useColor } from "react-color-palette";
+import "react-color-palette/css";
 
 export function ValueHighlightPicker({
   valueHighlights,
@@ -14,16 +15,8 @@ export function ValueHighlightPicker({
 }) {
   const id = useId();
 
-  const createColorResult = (hex: string): ColorResult => {
-    return {
-      hex: hex,
-      rgb: {r: 0, g: 0, b: 0},
-      hsl: {h: 0, s: 0, l: 0},
-    };
-  };
-
   const [text, setText] = useState("");
-  const [color, setColor] = useState<ColorResult>(createColorResult("#00FF00"));
+  const [color, setColor] = useColor("#00FF00");
 
   const addHighlight = () => {
     const valueHighlight = parseNumber(text);
@@ -42,7 +35,14 @@ export function ValueHighlightPicker({
   const formSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     addHighlight();
-  }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent default form submission
+      addHighlight();
+    }
+  };
 
   return (
     <form onSubmit={formSubmit}>
@@ -55,8 +55,9 @@ export function ValueHighlightPicker({
             id={id}
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
-          <ChromePicker color={color?.hex} onChangeComplete={setColor}/>
+          <ColorPicker color={color} onChange={setColor} />
           <button type="button" onClick={addHighlight}>
             Add
           </button>

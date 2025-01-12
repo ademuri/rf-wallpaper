@@ -44,7 +44,6 @@ export function Sketch(p5: P5CanvasInstance) {
   let diagonalGridMinorColor: Color;
 
   let highlightColor: Color;
-  let manualHighlightColor: Color;
 
   const defaultStrokeWeight = 1;
   const highlightStrokeWeight = 2;
@@ -698,7 +697,6 @@ export function Sketch(p5: P5CanvasInstance) {
     diagonalGridMajorColor = p5.color(64, 64, 64);
     diagonalGridMinorColor = p5.color(208, 208, 208);
     highlightColor = p5.color(255, 0, 0);
-    manualHighlightColor = p5.color(0, 255, 0);
   };
 
   p5.draw = () => {
