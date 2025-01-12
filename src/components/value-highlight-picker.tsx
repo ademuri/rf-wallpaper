@@ -1,6 +1,6 @@
 import React from "react";
 import { useId } from "react";
-import { ValueHighlight, Unit } from "../types";
+import { ValueHighlight } from "../types";
 import { useState } from "react";
 import { parseNumber } from "../math/math";
 
@@ -37,7 +37,9 @@ export function ValueHighlightPicker({
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
-          <button type="button" onClick={addHighlight}>Add</button>
+          <button type="button" onClick={addHighlight}>
+            Add
+          </button>
         </div>
       </fieldset>
     </form>

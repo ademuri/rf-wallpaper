@@ -7,6 +7,7 @@ import { formatNumber } from "./math/math";
 import { HighlightMode, ValueHighlight } from "./types";
 import { HighlightModePicker } from "./components/highlight-mode-picker";
 import { ValueHighlightPicker } from "./components/value-highlight-picker";
+import { ValueHighlightDisplay } from "./components/value-highlight-display";
 
 function App() {
   const [frequency, setFrequency] = useState(0);
@@ -71,6 +72,18 @@ function App() {
     setInductanceHighlightMode(mode);
     setAllHighlightMode(mode);
   };
+
+  const removeValueHighlight = (valueHighlight: ValueHighlight) => {
+    setValueHighlights(valueHighlights.filter((v) => v !== valueHighlight));
+  };
+
+  const valueHighlightList = valueHighlights.map((valueHighlight, index) => (
+    <ValueHighlightDisplay
+      key={index}
+      valueHighlight={valueHighlight}
+      removeCallback={removeValueHighlight}
+    />
+  ));
 
   return (
     <>
@@ -140,6 +153,7 @@ function App() {
             setValueHighlights={setValueHighlights}
           />
         </div>
+        {valueHighlightList}
       </div>
     </>
   );

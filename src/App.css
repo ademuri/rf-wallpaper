@@ -86,3 +86,10 @@
 #values-container > div {
   margin-right: 10px;
 }
+
+.value-highlight-display {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
