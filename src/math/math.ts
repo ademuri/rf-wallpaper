@@ -95,20 +95,20 @@ export function parseNumber(text: string): ValueHighlight | null {
   const valueHighlight: ValueHighlight = {
     unit: Unit.None,
     value: 0,
-    // Note: trimmed but not cannonicalized
+    // Note: trimmed but not canonicalized
     display: text,
   };
 
   for (const [name, unit] of units) {
     if (text.toLowerCase().endsWith(name)) {
       valueHighlight.unit = unit;
-      text = text.slice(0, -name.length);
+      text = text.slice(0, -(name.length + 0));
       break;
     }
   }
 
-  text.trim();
-  if (!text.match(/[\wμ]$/)) {
+  text = text.trim();
+  if (text.match(/\D$/) === null) {
     valueHighlight.value = Number(text);
     return valueHighlight;
   }
@@ -123,7 +123,8 @@ export function parseNumber(text: string): ValueHighlight | null {
   }
 
   if (prefixValue === null) {
-    return null;
+    throw new Error(`Prefix not found: ${prefix}, text: ${text}`);
+    // return null;
   }
   
   valueHighlight.value = Number(text.slice(0, -1)) * Math.pow(1000, prefixValue);

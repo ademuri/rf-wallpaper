@@ -75,7 +75,7 @@ describe("parseNumber", () => {
 
   it("parses the value", () => {
     expect(parseNumber("1 Hz")?.value).toEqual(1);
-    expect(parseNumber("1 mHz")?.value).toEqual(.001);
+    expect(parseNumber("1 mHz")?.value).toEqual(0.001);
     expect(parseNumber("1 kHz")?.value).toEqual(1000);
   });
 
@@ -88,7 +88,48 @@ describe("parseNumber", () => {
     expect(parseNumber("1 uHz")?.value).toEqual(1 / (1000 * 1000));
     expect(parseNumber("1 μHz")?.value).toEqual(1 / (1000 * 1000));
     expect(parseNumber("1 nHz")?.value).toEqual(1 / (1000 * 1000 * 1000));
-    expect(parseNumber("1 pHz")?.value).toEqual(1 / (1000 * 1000 * 1000 * 1000));
-    expect(parseNumber("1 fHz")?.value).toEqual(1 / (1000 * 1000 * 1000 * 1000 * 1000));
+    expect(parseNumber("1 pHz")?.value).toEqual(
+      1 / (1000 * 1000 * 1000 * 1000),
+    );
+    expect(parseNumber("1 fHz")?.value).toEqual(
+      1 / (1000 * 1000 * 1000 * 1000 * 1000),
+    );
+  });
+
+  it("allows no space between value and unit for Hz", () => {
+    expect(parseNumber("10Hz")).toEqual({
+      unit: Unit.Frequency,
+      value: 10,
+      display: "10Hz",
+    });
+    expect(parseNumber("10MHz")).toEqual({
+      unit: Unit.Frequency,
+      value: 10 * 1000 * 1000,
+      display: "10MHz",
+    });
+  });
+
+  it("allows no space between value and unit for R", () => {
+    expect(parseNumber("10MR")).toEqual({
+      unit: Unit.Resistance,
+      value: 10 * 1000 * 1000,
+      display: "10MR",
+    });
+  });
+
+  it("allows no space between value and unit for R with no prefix", () => {
+    expect(parseNumber("100Hz")).toEqual({
+      unit: Unit.Frequency,
+      value: 100,
+      display: "100Hz",
+    });
+  });
+
+  it("allows space between prefix and unit", () => {
+    expect(parseNumber("100k Hz")).toEqual({
+      unit: Unit.Frequency,
+      value: 100 * 1000,
+      display: "100k Hz",
+    });
   });
 });
