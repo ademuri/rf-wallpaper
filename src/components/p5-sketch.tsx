@@ -580,7 +580,6 @@ export function Sketch(p5: P5CanvasInstance) {
       );
     }
     const y = offsetForR(highlight.value);
-    p5.stroke(manualHighlightColor);
     p5.line(sideMargin, y, width - sideMargin, y);
   }
 
@@ -591,7 +590,6 @@ export function Sketch(p5: P5CanvasInstance) {
       );
     }
     const x = offsetForF(highlight.value);
-    p5.stroke(manualHighlightColor);
     p5.line(x, topMargin, x, height - bottomMargin);
   }
 
@@ -624,7 +622,6 @@ export function Sketch(p5: P5CanvasInstance) {
       y2 = offsetForR(lineMaxR);
     }
 
-    p5.stroke(manualHighlightColor);
     clippedLine(p5, x1, y1, x2, y2);
   }
 
@@ -658,12 +655,13 @@ export function Sketch(p5: P5CanvasInstance) {
       y2 = offsetForR(lineMaxR);
     }
 
-    p5.stroke(manualHighlightColor);
     clippedLine(p5, x1, y1, x2, y2);
   }
 
   function drawHighlights() {
     for (const highlight of highlights) {
+      p5.stroke(highlight.color);
+
       switch (highlight.unit) {
         case Unit.Resistance:
           drawResistanceHighlight(highlight);
@@ -740,7 +738,6 @@ export function Sketch(p5: P5CanvasInstance) {
     }
     if (props.highlights !== undefined) {
       highlights = props.highlights as ValueHighlight[];
-      console.log(highlights);
     }
   };
 }

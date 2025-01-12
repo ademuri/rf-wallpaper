@@ -10,6 +10,7 @@ export function ValueHighlightDisplay({
 }) {
   return (
     <div className="value-highlight-display">
+      <div className="value-color" style={{backgroundColor: valueHighlight.color}}></div>
       <div className="value-item">
         <span className="label">Value: </span>
         <span className="value">{valueHighlight.display}</span>

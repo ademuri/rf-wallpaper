@@ -53,6 +53,12 @@
   border-radius: 8px;
 }
 
+.chrome-picker {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
 .value-item {
   margin: 10px 0;
   display: flex;
@@ -92,4 +98,10 @@
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 8px;
+  max-height: 100px;
+}
+
+.value-color {
+  height: 10px;
+  border-radius: 5px;
 }

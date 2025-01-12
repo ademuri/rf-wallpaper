@@ -97,6 +97,7 @@ export function parseNumber(text: string): ValueHighlight | null {
     value: 0,
     // Note: trimmed but not canonicalized
     display: text,
+    color: '',
   };
 
   for (const [name, unit] of units) {
