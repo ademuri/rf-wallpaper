@@ -177,8 +177,10 @@ export function Sketch(p5: P5CanvasInstance) {
         thisLineMajorHighlight
       ) {
         p5.fill(highlightColor);
+        p5.strokeWeight(highlightStrokeWeight);
       } else {
         p5.fill(gridMajorColor);
+        p5.strokeWeight(defaultStrokeWeight);
       }
 
       p5.noStroke();
@@ -201,13 +203,16 @@ export function Sketch(p5: P5CanvasInstance) {
             thisLineMajorHighlight
           ) {
             p5.stroke(highlightColor);
+            p5.strokeWeight(highlightStrokeWeight);
           } else if (
             frequencyHighlightMode === HighlightMode.MINOR &&
             thisLineMinorHighlight
           ) {
             p5.stroke(highlightColor);
+            p5.strokeWeight(highlightStrokeWeight);
           } else {
             p5.stroke(gridMajorColor);
+            p5.strokeWeight(defaultStrokeWeight);
           }
         } else {
           if (
@@ -215,8 +220,10 @@ export function Sketch(p5: P5CanvasInstance) {
             thisLineMinorHighlight
           ) {
             p5.stroke(highlightColor);
+            p5.strokeWeight(highlightStrokeWeight);
           } else {
             p5.stroke(gridMinorColor);
+            p5.strokeWeight(defaultStrokeWeight);
           }
         }
         p5.line(x, topMargin, x, height - bottomMargin);
@@ -379,12 +386,14 @@ export function Sketch(p5: P5CanvasInstance) {
           }
         }
 
+        p5.strokeWeight(defaultStrokeWeight);
         if (
           capacitanceHighlightMode === HighlightMode.MAJOR &&
           n === 1 &&
           highlightMajor
         ) {
           lineColor = highlightColor;
+          p5.strokeWeight(highlightStrokeWeight);
         } else if (capacitanceHighlightMode === HighlightMode.MINOR) {
           const currentCLog = Math.log10(currentC);
           const mouseCLog = Math.log10(mouseC);
@@ -398,6 +407,7 @@ export function Sketch(p5: P5CanvasInstance) {
             mouseCLog < (nextCLog + currentCLog) / 2
           ) {
             lineColor = highlightColor;
+            p5.strokeWeight(highlightStrokeWeight);
           }
         }
 
@@ -426,8 +436,10 @@ export function Sketch(p5: P5CanvasInstance) {
           p5.rotate(45);
           if (highlightMajor) {
             p5.fill(highlightColor);
+            p5.strokeWeight(highlightStrokeWeight);
           } else {
             p5.fill(diagonalGridMajorColor);
+            p5.strokeWeight(defaultStrokeWeight);
           }
           p5.noStroke();
           p5.textAlign(p5.LEFT, p5.TOP);
@@ -501,12 +513,14 @@ export function Sketch(p5: P5CanvasInstance) {
           }
         }
 
+        p5.strokeWeight(defaultStrokeWeight);
         if (
           inductanceHighlightMode === HighlightMode.MAJOR &&
           n === 1 &&
           highlightMajor
         ) {
           lineColor = highlightColor;
+          p5.strokeWeight(highlightStrokeWeight);
         } else if (inductanceHighlightMode === HighlightMode.MINOR) {
           const currentLLog = Math.log10(currentL);
           const mouseLLog = Math.log10(mouseL);
@@ -520,6 +534,7 @@ export function Sketch(p5: P5CanvasInstance) {
             mouseLLog < (nextLLog + currentLLog) / 2
           ) {
             lineColor = highlightColor;
+            p5.strokeWeight(highlightStrokeWeight);
           }
         }
 
@@ -544,8 +559,10 @@ export function Sketch(p5: P5CanvasInstance) {
           p5.rotate(-45);
           if (highlightMajor) {
             p5.fill(highlightColor);
+            p5.strokeWeight(highlightStrokeWeight);
           } else {
             p5.fill(diagonalGridMajorColor);
+            p5.strokeWeight(defaultStrokeWeight);
           }
           p5.noStroke();
           p5.textAlign(p5.RIGHT, p5.TOP);
