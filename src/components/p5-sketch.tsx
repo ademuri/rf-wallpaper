@@ -660,6 +660,7 @@ export function Sketch(p5: P5CanvasInstance) {
   function drawHighlights() {
     for (const highlight of highlights) {
       p5.stroke(highlight.color);
+      p5.strokeWeight(highlightStrokeWeight);
 
       switch (highlight.unit) {
         case Unit.Resistance:

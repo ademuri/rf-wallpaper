@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { Sketch } from "./components/p5-sketch";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
@@ -30,7 +30,21 @@ function App() {
   const [allHighlightMode, setAllHighlightMode] =
     useState<HighlightMode | null>(HighlightMode.NONE);
 
-  const [valueHighlights, setValueHighlights] = useState<ValueHighlight[]>([]);
+  function getSavedValueHighlights(): ValueHighlight[] {
+    const stringValue = localStorage.getItem("valueHighlights");
+    if (stringValue !== null) {
+      return JSON.parse(stringValue) as ValueHighlight[];
+    }
+    return [];
+  }
+
+  const [valueHighlights, setValueHighlights] = useState<ValueHighlight[]>(
+    getSavedValueHighlights(),
+  );
+
+  useEffect(() => {
+    localStorage.setItem("valueHighlights", JSON.stringify(valueHighlights));
+  }, [valueHighlights]);
 
   const updateAllHighlightMode = (newMode: HighlightMode | null) => {
     if (
@@ -154,6 +168,13 @@ function App() {
           />
         </div>
         {valueHighlightList}
+        {valueHighlights.length > 0 && ( // Conditionally render the clear button
+          <div id="clear-all-highlights">
+            <button type="button" onClick={() => setValueHighlights([])}>
+              Clear all highlights
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

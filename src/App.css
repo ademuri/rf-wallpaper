@@ -104,3 +104,7 @@
   height: 10px;
   border-radius: 5px;
 }
+
+#clear-all-highlights {
+  padding: 20px;
+}
