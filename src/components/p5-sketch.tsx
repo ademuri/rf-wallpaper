@@ -595,6 +595,73 @@ export function Sketch(p5: P5CanvasInstance) {
     p5.line(x, topMargin, x, height - bottomMargin);
   }
 
+  function drawCapacitanceHighlight(highlight: ValueHighlight) {
+    if (highlight.unit !== Unit.Capacitance) {
+      throw new Error(
+        `Got incorrect highlight type in drawCapacitanceHighlight: ${highlight.unit}`,
+      );
+    }
+
+    const c = highlight.value;
+
+    // Calculate line coordinates based on whether the line originates on the right or bottom.
+    let x1: number, y1: number, x2: number, y2: number;
+    if (c < 1 / (2 * Math.PI * maxF * minR)) {
+      // Originates on right side
+      const lineMinZ = 1 / (2 * Math.PI * maxF * c);
+      const lineMinF = 1 / (2 * Math.PI * c * maxR);
+      x1 = width - sideMargin;
+      y1 = offsetForR(lineMinZ);
+      x2 = offsetForF(lineMinF);
+      y2 = topMargin;
+    } else {
+      // Originates on bottom
+      const lineMaxR = 1 / (2 * Math.PI * minF * c);
+      const lineMaxF = 1 / (2 * Math.PI * c * minR);
+      x1 = offsetForF(lineMaxF);
+      y1 = height - bottomMargin;
+      x2 = sideMargin;
+      y2 = offsetForR(lineMaxR);
+    }
+
+    p5.stroke(manualHighlightColor);
+    clippedLine(p5, x1, y1, x2, y2);
+  }
+
+  function drawInductanceHighlight(highlight: ValueHighlight) {
+    if (highlight.unit !== Unit.Inductance) {
+      throw new Error(
+        `Got incorrect highlight type in drawInductanceHighlight: ${highlight}`,
+      );
+    }
+
+    const l = highlight.value;
+    const cornerL = minR / (2 * Math.PI * minF);
+
+    // Calculate line coordinates based on whether the line originates on the left or bottom.
+    let x1: number, y1: number, x2: number, y2: number;
+    if (l > cornerL) {
+      // Originates on left side
+      const lineMinZ = 2 * Math.PI * minF * l;
+      const lineMaxF = maxR / (2 * Math.PI * l);
+      x1 = sideMargin;
+      y1 = offsetForR(lineMinZ);
+      x2 = offsetForF(lineMaxF);
+      y2 = topMargin;
+    } else {
+      // Originates on bottom
+      const lineMinF = minR / (2 * Math.PI * l);
+      const lineMaxR = 2 * Math.PI * maxF * l;
+      x1 = offsetForF(lineMinF);
+      y1 = height - bottomMargin;
+      x2 = width - sideMargin;
+      y2 = offsetForR(lineMaxR);
+    }
+
+    p5.stroke(manualHighlightColor);
+    clippedLine(p5, x1, y1, x2, y2);
+  }
+
   function drawHighlights() {
     for (const highlight of highlights) {
       switch (highlight.unit) {
@@ -603,6 +670,12 @@ export function Sketch(p5: P5CanvasInstance) {
           break;
         case Unit.Frequency:
           drawFrequencyHighlight(highlight);
+          break;
+        case Unit.Capacitance:
+          drawCapacitanceHighlight(highlight);
+          break;
+        case Unit.Inductance:
+          drawInductanceHighlight(highlight);
           break;
         default:
           throw new Error(

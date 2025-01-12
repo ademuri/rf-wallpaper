@@ -25,8 +25,13 @@ export function ValueHighlightPicker({
     setText("");
   };
 
+  const formSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    addHighlight();
+  }
+
   return (
-    <form>
+    <form onSubmit={formSubmit}>
       <fieldset>
         <legend>Add value highlight</legend>
         <div>
