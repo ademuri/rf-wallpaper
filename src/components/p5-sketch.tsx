@@ -17,16 +17,6 @@ export function Sketch(p5: P5CanvasInstance) {
   let capacitanceHighlightMode: HighlightMode = HighlightMode.NONE;
   let inductanceHighlightMode: HighlightMode = HighlightMode.NONE;
 
-  // Highlight types
-  const MAJOR = 1;
-  const MINOR = 2;
-
-  // Highlight form names
-  const FREQUENCY = "frequency";
-  const RESISTANCE = "resistance";
-  const CAPACITANCE = "capacitance";
-  const INDUCTANCE = "inductance";
-
   const minR = 0.01;
   const maxR = 1000 * 1000;
   const minF = 1;
@@ -155,23 +145,6 @@ export function Sketch(p5: P5CanvasInstance) {
     p5.line(x1, y1, x2, y2);
   }
 
-  function getHighlightMode(p5: P5CanvasInstance, name: string) {
-    return 1;
-    const formName = `${name}-highlight`;
-    const form = document.querySelector(`#${formName}`);
-    const data = new FormData(form as HTMLFormElement);
-    switch (data.get(formName)) {
-      case "minor":
-        return 2;
-      case "major":
-        return 1;
-
-      case "none":
-      default:
-        return 0;
-    }
-  }
-
   function mouseNearCanvas(p5: { mouseX: number; mouseY: number }) {
     return (
       p5.mouseX > decadeWidth / 2 &&
@@ -214,15 +187,15 @@ export function Sketch(p5: P5CanvasInstance) {
           p5.mouseX <= x + (nextX - x) / 2;
 
         if (n === 1) {
-          if (frequencyHighlightMode === MAJOR && thisLineMajorHighlight) {
+          if (frequencyHighlightMode === HighlightMode.MAJOR && thisLineMajorHighlight) {
             p5.stroke(highlightColor);
-          } else if (frequencyHighlightMode === MINOR && thisLineMinorHighlight) {
+          } else if (frequencyHighlightMode === HighlightMode.MINOR && thisLineMinorHighlight) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMajorColor);
           }
         } else {
-          if (frequencyHighlightMode === MINOR && thisLineMinorHighlight) {
+          if (frequencyHighlightMode === HighlightMode.MINOR && thisLineMinorHighlight) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMinorColor);
@@ -255,7 +228,7 @@ export function Sketch(p5: P5CanvasInstance) {
         mouseNearCanvas(p5) &&
         p5.mouseY > offset - decadeWidth / 2 &&
         p5.mouseY < offset + decadeWidth / 2;
-      if (resistanceHighlightMode >= MAJOR && thisLineMajorHighlight) {
+      if (resistanceHighlightMode >= HighlightMode.MAJOR && thisLineMajorHighlight) {
         p5.fill(highlightColor);
       } else {
         p5.fill(gridMajorColor);
@@ -276,15 +249,15 @@ export function Sketch(p5: P5CanvasInstance) {
           p5.mouseY < y + (prevY - y) / 2;
 
         if (n === 1) {
-          if (resistanceHighlightMode === MAJOR && thisLineMajorHighlight) {
+          if (resistanceHighlightMode === HighlightMode.MAJOR && thisLineMajorHighlight) {
             p5.stroke(highlightColor);
-          } else if (resistanceHighlightMode === MINOR && thisLineMinorHighlight) {
+          } else if (resistanceHighlightMode === HighlightMode.MINOR && thisLineMinorHighlight) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMajorColor);
           }
         } else {
-          if (resistanceHighlightMode === MINOR && thisLineMinorHighlight) {
+          if (resistanceHighlightMode === HighlightMode.MINOR && thisLineMinorHighlight) {
             p5.stroke(highlightColor);
           } else {
             p5.stroke(gridMinorColor);
@@ -356,7 +329,7 @@ export function Sketch(p5: P5CanvasInstance) {
         let lineColor =
           n === 1 ? diagonalGridMajorColor : diagonalGridMinorColor;
         let highlightMajor = false;
-        if (capacitanceHighlightMode >= MAJOR) {
+        if (capacitanceHighlightMode >= HighlightMode.MAJOR) {
           const currentCLog = Math.log10(currentC);
           const prevCLog = Math.log10(majorC / 10);
           const nextCLog = Math.log10(majorC * 10);
@@ -369,9 +342,9 @@ export function Sketch(p5: P5CanvasInstance) {
           }
         }
 
-        if (capacitanceHighlightMode === MAJOR && n === 1 && highlightMajor) {
+        if (capacitanceHighlightMode === HighlightMode.MAJOR && n === 1 && highlightMajor) {
           lineColor = highlightColor;
-        } else if (capacitanceHighlightMode === MINOR) {
+        } else if (capacitanceHighlightMode === HighlightMode.MINOR) {
           const currentCLog = Math.log10(currentC);
           const mouseCLog = Math.log10(mouseC);
           const nextCLog = Math.log10(majorC * (n + 1));
@@ -474,7 +447,7 @@ export function Sketch(p5: P5CanvasInstance) {
         let lineColor =
           n === 1 ? diagonalGridMajorColor : diagonalGridMinorColor;
         let highlightMajor = false;
-        if (inductanceHighlightMode >= MAJOR) {
+        if (inductanceHighlightMode >= HighlightMode.MAJOR) {
           const currentLLog = Math.log10(currentL);
           const prevLLog = Math.log10(majorL / 10);
           const nextLLog = Math.log10(majorL * 10);
@@ -487,9 +460,9 @@ export function Sketch(p5: P5CanvasInstance) {
           }
         }
 
-        if (inductanceHighlightMode === MAJOR && n === 1 && highlightMajor) {
+        if (inductanceHighlightMode === HighlightMode.MAJOR && n === 1 && highlightMajor) {
           lineColor = highlightColor;
-        } else if (inductanceHighlightMode === MINOR) {
+        } else if (inductanceHighlightMode === HighlightMode.MINOR) {
           const currentLLog = Math.log10(currentL);
           const mouseLLog = Math.log10(mouseL);
           const nextLLog = Math.log10(majorL * (n + 1));
