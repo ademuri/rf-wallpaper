@@ -7,7 +7,7 @@ export function HighlightModePicker({
   setMode,
 }: {
   modeName: string;
-  mode: HighlightMode;
+  mode: HighlightMode | null;
   setMode: (mode: HighlightMode) => void;
 }) {
   const values = Object.values(HighlightMode)

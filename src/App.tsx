@@ -25,6 +25,49 @@ function App() {
   const [inductanceHighlightMode, setInductanceHighlightMode] = useState(
     HighlightMode.NONE,
   );
+  const [allHighlightMode, setAllHighlightMode] =
+    useState<HighlightMode | null>(HighlightMode.NONE);
+
+  const updateAllHighlightMode = (newMode: HighlightMode | null) => {
+    if (
+      newMode === frequencyHighlightMode &&
+      newMode === resistanceHighlightMode &&
+      newMode === capacitanceHighlightMode &&
+      newMode === inductanceHighlightMode
+    ) {
+      setAllHighlightMode(newMode);
+    } else {
+      setAllHighlightMode(null);
+    }
+  };
+
+  const setFrequencyHighlightModeAndAll = (mode: HighlightMode) => {
+    setFrequencyHighlightMode(mode);
+    updateAllHighlightMode(mode);
+  };
+
+  const setResistanceHighlightModeAndAll = (mode: HighlightMode) => {
+    setResistanceHighlightMode(mode);
+    updateAllHighlightMode(mode);
+  };
+
+  const setCapacitanceHighlightModeAndAll = (mode: HighlightMode) => {
+    setCapacitanceHighlightMode(mode);
+    updateAllHighlightMode(mode);
+  };
+
+  const setInductanceHighlightModeAndAll = (mode: HighlightMode) => {
+    setInductanceHighlightMode(mode);
+    updateAllHighlightMode(mode);
+  };
+
+  const setAllHighlightModes = (mode: HighlightMode) => {
+    setFrequencyHighlightMode(mode);
+    setResistanceHighlightMode(mode);
+    setCapacitanceHighlightMode(mode);
+    setInductanceHighlightMode(mode);
+    setAllHighlightMode(mode);
+  };
 
   return (
     <>
@@ -45,22 +88,27 @@ function App() {
         <HighlightModePicker
           modeName="Frequency"
           mode={frequencyHighlightMode}
-          setMode={setFrequencyHighlightMode}
+          setMode={setFrequencyHighlightModeAndAll}
         />
         <HighlightModePicker
           modeName="Resistance"
           mode={resistanceHighlightMode}
-          setMode={setResistanceHighlightMode}
+          setMode={setResistanceHighlightModeAndAll}
         />
         <HighlightModePicker
           modeName="Capacitance"
           mode={capacitanceHighlightMode}
-          setMode={setCapacitanceHighlightMode}
+          setMode={setCapacitanceHighlightModeAndAll}
         />
         <HighlightModePicker
           modeName="Inductance"
           mode={inductanceHighlightMode}
-          setMode={setInductanceHighlightMode}
+          setMode={setInductanceHighlightModeAndAll}
+        />
+        <HighlightModePicker
+          modeName="All"
+          mode={allHighlightMode}
+          setMode={setAllHighlightModes}
         />
       </div>
       <div id="value-display">
