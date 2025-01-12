@@ -19,24 +19,24 @@ export function Sketch(p5: P5CanvasInstance) {
 
   let highlights: ValueHighlight[] = [];
 
-  const minR = 0.01;
-  const maxR = 1000 * 1000;
-  const minF = 1;
-  const maxF = 10 * 1000 * 1000 * 1000;
+  let minR = 0.01;
+  let maxR = 1000 * 1000;
+  let minF = 1;
+  let maxF = 10 * 1000 * 1000 * 1000;
 
-  const numFDecades = intLog10(maxF) - intLog10(minF);
-  const numRDecades = intLog10(maxR) - intLog10(minR);
+  let numFDecades = intLog10(maxF) - intLog10(minF);
+  let numRDecades = intLog10(maxR) - intLog10(minR);
 
   const fontSize = 20;
   const topMargin = fontSize * 2;
   const bottomMargin = topMargin * 2;
   const sideMargin = 100;
 
-  const width = 1200;
-  const gridWidth = width - sideMargin * 2;
-  const decadeWidth = gridWidth / numFDecades;
-  const gridHeight = numRDecades * decadeWidth;
-  const height = gridHeight + topMargin + bottomMargin;
+  let width = 1200;
+  let gridWidth = width - sideMargin * 2;
+  let decadeWidth = gridWidth / numFDecades;
+  let gridHeight = numRDecades * decadeWidth;
+  let height = gridHeight + topMargin + bottomMargin;
 
   let gridMajorColor: Color;
   let gridMinorColor: Color;
@@ -49,9 +49,10 @@ export function Sketch(p5: P5CanvasInstance) {
   const highlightStrokeWeight = 2;
 
   const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-  const decadeOffsets = new Map(
+  const computeDecadeOffsets = () => new Map(
     decadeValues.map((x) => [x, Math.log10(x) * decadeWidth]),
   );
+  let decadeOffsets = computeDecadeOffsets();
 
   function getDecadeOffset(decade: number): number {
     const val = decadeOffsets.get(decade);
@@ -738,6 +739,32 @@ export function Sketch(p5: P5CanvasInstance) {
     if (props.highlights !== undefined) {
       highlights = props.highlights as ValueHighlight[];
     }
+
+    if (props.canvasWidth && (props.canvasWidth as number) > 500) {
+      width = props.canvasWidth as number;
+    }
+    if (props.minR) {
+      minR = props.minR as number;
+    }
+    if (props.maxR) {
+      maxR = props.maxR as number;
+    }
+    if (props.minF) {
+      minF = props.minF as number;
+    }
+    if (props.maxF) {
+      maxF = props.maxF as number;
+    }
+    // recalculate dependant variables:
+    numFDecades = intLog10(maxF) - intLog10(minF);
+    numRDecades = intLog10(maxR) - intLog10(minR);
+
+    gridWidth = width - sideMargin * 2;
+    decadeWidth = gridWidth / numFDecades;
+    gridHeight = numRDecades * decadeWidth;
+    height = gridHeight + topMargin + bottomMargin;
+    decadeOffsets = computeDecadeOffsets();
+    p5.resizeCanvas(width, height);
   };
 }
 

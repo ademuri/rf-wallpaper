@@ -46,6 +46,48 @@ function App() {
     localStorage.setItem("valueHighlights", JSON.stringify(valueHighlights));
   }, [valueHighlights]);
 
+  const [canvasWidth, setCanvasWidth] = useState(1200);
+  const [canvasHeight, setCanvasHeight] = useState(0); // Initial height will be calculated in Sketch
+  const [minR, setMinR] = useState(0.01);
+  const [maxR, setMaxR] = useState(1000 * 1000);
+  const [minF, setMinF] = useState(1);
+  const [maxF, setMaxF] = useState(10 * 1000 * 1000 * 1000);
+
+  const handleCanvasWidthChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newWidth = parseInt(event.target.value, 10);
+    if (!isNaN(newWidth) && newWidth > 0) {
+      console.log(newWidth);
+        setCanvasWidth(newWidth);
+    }
+  };
+  const handleMinRChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newMinR = parseFloat(event.target.value);
+    if (!isNaN(newMinR) && newMinR > 0) {
+        setMinR(newMinR);
+    }
+  };
+
+  const handleMaxRChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newMaxR = parseFloat(event.target.value);
+    if (!isNaN(newMaxR) && newMaxR > 0) {
+        setMaxR(newMaxR);
+    }
+  };
+
+  const handleMinFChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newMinF = parseFloat(event.target.value);
+    if (!isNaN(newMinF) && newMinF > 0) {
+        setMinF(newMinF);
+    }
+  };
+
+  const handleMaxFChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newMaxF = parseFloat(event.target.value);
+    if (!isNaN(newMaxF) && newMaxF > 0) {
+        setMaxF(newMaxF);
+    }
+  };
+
   const updateAllHighlightMode = (newMode: HighlightMode | null) => {
     if (
       newMode === frequencyHighlightMode &&
@@ -113,6 +155,12 @@ function App() {
           capacitanceHighlightMode={capacitanceHighlightMode}
           inductanceHighlightMode={inductanceHighlightMode}
           highlights={valueHighlights}
+          canvasWidth={canvasWidth}
+          canvasHeight={canvasHeight}
+          minR={minR}
+          maxR={maxR}
+          minF={minF}
+          maxF={maxF}
         />
       </div>
       <div id="highlight-forms">
@@ -176,6 +224,48 @@ function App() {
           </div>
         )}
       </div>
+      <form>
+        <label htmlFor="canvasWidth">Canvas Width:</label>
+        <input
+          type="number"
+          id="canvasWidth"
+          value={canvasWidth}
+          onChange={handleCanvasWidthChange}
+        />
+        <br/>
+        <label htmlFor="minR">Min Resistance:</label>
+        <input
+          type="number"
+          id="minR"
+          value={minR}
+          onChange={handleMinRChange}
+        />
+        <br/>
+        <label htmlFor="maxR">Max Resistance:</label>
+        <input
+          type="number"
+          id="maxR"
+          value={maxR}
+          onChange={handleMaxRChange}
+        />
+        <br/>
+
+        <label htmlFor="minF">Min Frequency:</label>
+        <input
+          type="number"
+          id="minF"
+          value={minF}
+          onChange={handleMinFChange}
+        />
+        <br/>
+        <label htmlFor="maxF">Max Frequency:</label>
+        <input
+          type="number"
+          id="maxF"
+          value={maxF}
+          onChange={handleMaxFChange}
+        />
+      </form>
     </>
   );
 }
