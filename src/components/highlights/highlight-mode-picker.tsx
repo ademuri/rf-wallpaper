@@ -1,5 +1,5 @@
 import React from "react";
-import { HighlightMode } from "../types";
+import { HighlightMode } from "../../types";
 
 export function HighlightModePicker({
   modeName,

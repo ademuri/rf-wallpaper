@@ -1,5 +1,5 @@
 import React from "react";
-import { ValueHighlight } from "../types";
+import { ValueHighlight } from "../../types";
 
 export function ValueHighlightDisplay({
   valueHighlight,

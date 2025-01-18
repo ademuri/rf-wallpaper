@@ -1,8 +1,8 @@
 import React from "react";
 import { useId } from "react";
-import { ValueHighlight } from "../types";
+import { ValueHighlight } from "../../types";
 import { useState } from "react";
-import { parseNumber } from "../math/math";
+import { parseNumber } from "../../math/math";
 import { ColorPicker, useColor } from "react-color-palette";
 import "react-color-palette/css";
 

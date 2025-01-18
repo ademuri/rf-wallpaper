@@ -5,9 +5,9 @@ import { Sketch } from "./components/p5-sketch";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { formatNumber } from "./math/math";
 import { HighlightMode, ValueHighlight } from "./types";
-import { HighlightModePicker } from "./components/highlight-mode-picker";
-import { ValueHighlightPicker } from "./components/value-highlight-picker";
-import { ValueHighlightDisplay } from "./components/value-highlight-display";
+import { HighlightModePicker } from "./components/highlights/highlight-mode-picker";
+import { ValueHighlightPicker } from "./components/highlights/value-highlight-picker";
+import { ValueHighlightDisplay } from "./components/highlights/value-highlight-display";
 
 function App() {
   const [frequency, setFrequency] = useState(0);

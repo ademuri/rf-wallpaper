@@ -1,2 +1,2 @@
 export * from './enums';
-export * from './value-highlight';
+export * from './highlights';
