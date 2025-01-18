@@ -47,7 +47,7 @@ function App() {
   }, [valueHighlights]);
 
   const [canvasWidth, setCanvasWidth] = useState(1200);
-  const [canvasHeight, setCanvasHeight] = useState(0); // Initial height will be calculated in Sketch
+  const [canvasHeight, _setCanvasHeight] = useState(0); // Initial height will be calculated in Sketch
   const [minR, setMinR] = useState(0.01);
   const [maxR, setMaxR] = useState(1000 * 1000);
   const [minF, setMinF] = useState(1);

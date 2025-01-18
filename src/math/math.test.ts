@@ -1,5 +1,5 @@
 import { intLog10, formatNumber, parseNumber } from "./math";
-import { Unit, ValueHighlight } from "../types";
+import { Unit } from "../types";
 
 describe("intLog10", () => {
   it("handles even powers of 10", () => {
