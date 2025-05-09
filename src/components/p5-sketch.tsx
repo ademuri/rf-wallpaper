@@ -49,9 +49,8 @@ export function Sketch(p5: P5CanvasInstance) {
   const highlightStrokeWeight = 2;
 
   const decadeValues = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-  const computeDecadeOffsets = () => new Map(
-    decadeValues.map((x) => [x, Math.log10(x) * decadeWidth]),
-  );
+  const computeDecadeOffsets = () =>
+    new Map(decadeValues.map((x) => [x, Math.log10(x) * decadeWidth]));
   let decadeOffsets = computeDecadeOffsets();
 
   function getDecadeOffset(decade: number): number {
@@ -677,7 +676,7 @@ export function Sketch(p5: P5CanvasInstance) {
           drawInductanceHighlight(highlight);
           break;
         default:
-          throw new Error(
+          console.error(
             `Got incorrect highlight type in drawHighlights: ${highlight}`,
           );
       }
