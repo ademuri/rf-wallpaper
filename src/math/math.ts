@@ -108,6 +108,10 @@ export function parseNumber(text: string): ValueHighlight | null {
     }
   }
 
+  if (valueHighlight.unit === Unit.None) {
+    return null;
+  }
+
   text = text.trim();
   if (text.match(/\D$/) === null) {
     valueHighlight.value = Number(text);
